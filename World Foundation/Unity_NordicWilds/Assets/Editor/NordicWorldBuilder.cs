@@ -1646,7 +1646,7 @@ namespace NordicWilds.EditorTools
             var vel = ps.velocityOverLifetime;
             vel.enabled = true;
             vel.x = new ParticleSystem.MinMaxCurve(-0.4f,0.4f);
-            vel.y = new ParticleSystem.MinMaxCurve(0f,0.05f);
+            vel.y = new ParticleSystem.MinMaxCurve(0.01f,0.05f);
             vel.z = new ParticleSystem.MinMaxCurve(-0.2f,0.5f);
 
             var col = ps.colorOverLifetime;
@@ -2016,7 +2016,7 @@ namespace NordicWilds.EditorTools
             var pV = ps.velocityOverLifetime;
             pV.enabled = true;
             pV.x = new ParticleSystem.MinMaxCurve(-0.6f,0.6f);
-            pV.y = new ParticleSystem.MinMaxCurve(-0.6f,0.6f);
+            pV.y = new ParticleSystem.MinMaxCurve(-0.61f,0.6f);
             pV.z = new ParticleSystem.MinMaxCurve(-3.5f,-1.2f);
         }
 
@@ -2460,10 +2460,12 @@ namespace NordicWilds.EditorTools
         player.transform.rotation = Quaternion.Euler(0, 0, 0);
         
         // 4. Setup Camera View
-        var isoCam = cam.GetComponentInParent<NordicWilds.CameraSystems.IsometricCameraFollow>();
-        if (isoCam != null) {
-            isoCam.target = boat.transform;
-            cam.transform.parent.position = boat.transform.position + new Vector3(-12f, 16f, -12f);
+        if (cam != null && boat != null) {
+            var isoCam = cam.GetComponent<NordicWilds.CameraSystems.IsometricCameraFollow>();
+            if (isoCam != null) {
+                isoCam.target = boat.transform;
+                cam.transform.position = boat.transform.position + new Vector3(-12f, 16f, -12f);
+            }
         }
 
         // 5. Create UI Canvas Overlay
