@@ -9,19 +9,19 @@ using System.Collections.Generic;
 
 namespace NordicWilds.EditorTools
 {
-    // ╔══════════════════════════════════════════════════════════════════════════════╗
+    // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
     //  NORDIC WORLD BUILDER  |  Dual-Realm Prestige Edition  v3.0
-    // ╠══════════════════════════════════════════════════════════════════════════════╣
+    // ÔòáÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòú
     //
     //  DESIGN PHILOSOPHY
-    //  ─────────────────
+    //  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
     //  Each realm is built around a distinct MOOD PALETTE, not just geometry.
     //  We follow the "Rule of Thirds" for landmark placement, the "Five-Layer
     //  Depth" model (sky / far-bg / mid / near / floor), and the "Silhouette Test"
     //  (every major prop must read clearly in silhouette).
     //
-    //  FROSTHEIM  ─ Norse Viking  (origin 0,0,0)
-    //  ──────────────────────────────────────────
+    //  FROSTHEIM  ÔöÇ Norse Viking  (origin 0,0,0)
+    //  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
     //  Mood:    Iron-grey dawn, survival, ancient power.
     //  Palette: Cold steel blues, ash whites, ember oranges, blood reds.
     //  Shapes:  Heavy, earthbound, asymmetric ruin.
@@ -32,8 +32,8 @@ namespace NordicWilds.EditorTools
     //           collapsed bridge, fjord valley vista, GODRAYS through
     //           overcast sky.
     //
-    //  YAMATO  ─ Feudal Japan  (offset 10000,0,10000)
-    //  ────────────────────────────────────────────────
+    //  YAMATO  ÔöÇ Feudal Japan  (offset 10000,0,10000)
+    //  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
     //  Mood:    Golden afternoon light, disciplined beauty, hidden danger.
     //  Palette: Vermillion reds, warm gold, deep indigo, moss greens,
     //           cream paper, gunmetal black.
@@ -42,38 +42,46 @@ namespace NordicWilds.EditorTools
     //  New:     Dry-moat castle approach, Noh theatre stage, ceremonial
     //           archery range (kyudojo), ornamental bridge over stream,
     //           watermill, midnight-black armoury, stone garden of the
-    //           dead (gorintō stupa field), lantern festival pennants,
+    //           dead (gorint┼ì stupa field), lantern festival pennants,
     //           hidden ninja rooftop paths, blossoming wisteria arcade,
     //           koi waterfall cascade, Butsudan altar alcove, VOLUMETRIC
     //           morning-mist layer.
     //
-    // ╚══════════════════════════════════════════════════════════════════════════════╝
+    // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
     public class NordicWorldBuilder : EditorWindow
     {
+        // ── TOP MENU: World Generation ────────────────────────────────────────
+        [MenuItem("World Generation/Generate World ★")]
+        [MenuItem("Window/Nordic Wilds/Open World Builder")]
+        public static void OpenAndGenerate()
+        {
+            BuildMasterpieceWorld();
+        }
+
+        [MenuItem("World Generation/Generate Masterpiece Environment")]
         [MenuItem("World Foundation/Generate Masterpiece Environment")]
-        [MenuItem("Nordic Wilds/Generate Masterpiece Environment")]
         public static void BuildMasterpieceWorld()
         {
-            Debug.Log("══════════════════════════════════════════════════════════════════");
-            Debug.Log("  NORDIC WORLD BUILDER v3.0 — Dual-Realm Prestige Edition");
-            Debug.Log("  FROSTHEIM (Norse) ←→ YAMATO (Feudal Japan)");
-            Debug.Log("══════════════════════════════════════════════════════════════════");
+            Debug.Log("ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ");
+            Debug.Log("  NORDIC WORLD BUILDER v3.0 ÔÇö Dual-Realm Prestige Edition");
+            Debug.Log("  FROSTHEIM (Norse) ÔåÉÔåÆ YAMATO (Feudal Japan)");
+            Debug.Log("ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ");
 
-            // ── Tags ─────────────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Tags ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             foreach (string t in new[]{ "Player","Campfire","Enemy","Portal",
                                          "Interactable","Climbable","Secret" })
                 EnsureTagExists(t);
 
-            // ── Clear ─────────────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Clear ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             foreach (string n in new[]{ "Nordic World Root","Player","Isometric Camera Rig" })
                 DestroyImmediate(GameObject.Find(n));
 
             GameObject worldRoot = new GameObject("Nordic World Root");
 
-            // ══════════════════════════════════════════════════════════════════════
-            //  FROSTHEIM MATERIALS  ─ five-tone palette + noise textures
-            // ══════════════════════════════════════════════════════════════════════
+            // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
+            //  FROSTHEIM MATERIALS  ÔöÇ five-tone palette + noise textures
+            // ÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉ
             // Primary surfaces
             Material snowMat        = MakeMat(GenNoise(new Color(0.87f,0.91f,0.96f), new Color(0.72f,0.83f,0.91f), 10f), 0.06f);
             Material snowDirtyMat   = MakeMat(GenNoise(new Color(0.70f,0.74f,0.80f), new Color(0.55f,0.60f,0.68f), 14f), 0.04f);
@@ -101,7 +109,7 @@ namespace NordicWilds.EditorTools
             Material gildedMat      = MakeMat(null, 0.88f);  gildedMat.color  = new Color(0.88f,0.74f,0.28f);
             Material charMat        = MakeMat(null, 0.02f);  charMat.color    = new Color(0.09f,0.08f,0.07f);
 
-            // ── Frostheim Lighting ────────────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Lighting ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             // Overcast iron-dawn: low, blue-grey directional from north-west
 #if UNITY_2023_1_OR_NEWER
             Light dirLight = Object.FindFirstObjectByType<Light>();
@@ -130,15 +138,15 @@ namespace NordicWilds.EditorTools
             RenderSettings.fogMode    = FogMode.ExponentialSquared;
             RenderSettings.fogDensity = 0.009f;
 
-            // ── Frostheim Terrain & Geology ───────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Terrain & Geology ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  FIVE-LAYER DEPTH:
             //   1. Sky / god-rays (particles)
-            //   2. Distant mountain silhouettes  ← new
+            //   2. Distant mountain silhouettes  ÔåÉ new
             //   3. Mid cliff faces
             //   4. Village & encounter arena
             //   5. Foreground path & detail props
 
-            // Base snow field — slightly undulating via scale trick
+            // Base snow field ÔÇö slightly undulating via scale trick
             CreateBlock("Arena Floor",     new Vector3(  0,-0.50f,   0), new Vector3(420,1.0f,420), snowMat,      worldRoot.transform);
             CreateBlock("Under Floor",     new Vector3(  0,-1.20f,   0), new Vector3(420,1.0f,420), snowDirtyMat, worldRoot.transform);
 
@@ -148,15 +156,15 @@ namespace NordicWilds.EditorTools
             // --- Layer 3: Cliffs & natural boundaries ---
             // North cliff mass
             CreateBlock("North Cliff",  new Vector3(  0,  2.0f, 100f), new Vector3(420,  5f, 210), stoneMat,     worldRoot.transform);
-            // West & East sheer cliff faces (strata layering — two-tone)
+            // West & East sheer cliff faces (strata layering ÔÇö two-tone)
             CreateStratifiedCliff("West Cliff",  new Vector3(-205f, 10f,   0), new Vector3(8f, 28f, 420), stoneMat, darkStoneMat, worldRoot.transform, false);
             CreateStratifiedCliff("East Cliff",  new Vector3( 205f, 10f,   0), new Vector3(8f, 28f, 420), stoneMat, darkStoneMat, worldRoot.transform, false);
             CreateBlock("South Wall",   new Vector3(  0,  8f, -205f), new Vector3(420, 28f,  8), stoneMat,      worldRoot.transform);
 
-            // Frozen waterfall — north-west cliff face (design landmark #1)
+            // Frozen waterfall ÔÇö north-west cliff face (design landmark #1)
             CreateFrozenWaterfall(new Vector3(-65f, 0f, 68f), worldRoot.transform, iceMat, iceDeepMat, stoneMat);
 
-            // Frozen lake — east of village, with cracked ice detail
+            // Frozen lake ÔÇö east of village, with cracked ice detail
             CreateFrozenLake(new Vector3(58f, 0f, 22f), worldRoot.transform, iceMat, iceDeepMat, stoneMat, snowMat);
 
             // Fjord valley glimpse cut into the south wall
@@ -170,7 +178,7 @@ namespace NordicWilds.EditorTools
             CreateInvisibleWall("W Bound", new Vector3( -82f,5f,    0), new Vector3(  2, 22, 165), bounds.transform);
             CreateInvisibleWall("E Bound", new Vector3(  82f,5f,    0), new Vector3(  2, 22, 165), bounds.transform);
 
-            // ── Terrain Surface Detail ────────────────────────────────────────────
+            // ÔöÇÔöÇ Terrain Surface Detail ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             // Scattered snow/mud patches for visual noise (Rule: vary scale & rotation)
             for (int i = 0; i < 80; i++)
             {
@@ -181,7 +189,7 @@ namespace NordicWilds.EditorTools
                 patch.transform.rotation = Quaternion.Euler(0, Random.Range(0,360), 0);
             }
 
-            // ── Grand Approach: Entrance Corridor & Causeway ──────────────────────
+            // ÔöÇÔöÇ Grand Approach: Entrance Corridor & Causeway ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             // Stone-paved causeway from south entry
             CreateBlock("Entrance Causeway", new Vector3(0,-0.5f,-42f), new Vector3(10,1,44), snowMat, worldRoot.transform);
             for (int i = 0; i < 11; i++)
@@ -215,21 +223,21 @@ namespace NordicWilds.EditorTools
                 new Vector3(0, 1.6f, 43.5f), new Vector3(16f, 0.5f, 8f), grandStairs.transform);
             stairRamp.transform.rotation = Quaternion.Euler(-30f, 0, 0);
 
-            // ── North Altar: Sacred Heart of Frostheim ────────────────────────────
+            // ÔöÇÔöÇ North Altar: Sacred Heart of Frostheim ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  Design goal: Overwhelming sense of age and power.
             //  Uses offset rotation on stones to avoid "manufactured" look.
 
-            // Altar platform — tiered
+            // Altar platform ÔÇö tiered
             CreateBlock("Altar Platform 1", new Vector3(0, -0.5f, 55f), new Vector3(38f,1.0f,30f), stoneMat,     worldRoot.transform);
             CreateBlock("Altar Platform 2", new Vector3(0,  0.5f, 55f), new Vector3(28f,1.0f,22f), darkStoneMat, worldRoot.transform);
             CreateBlock("Altar Platform 3", new Vector3(0,  1.5f, 55f), new Vector3(18f,0.8f,14f), darkStoneMat, worldRoot.transform);
 
-            // The Great Runestone — veined rune-stone material, slightly tilted
+            // The Great Runestone ÔÇö veined rune-stone material, slightly tilted
             GameObject runestone = CreateBlock("Great Runestone",
                 new Vector3(0, 6.2f, 55f), new Vector3(3.2f, 11f, 2.8f), runeStoneVein, worldRoot.transform);
             runestone.transform.rotation = Quaternion.Euler(0, 14, 5);
 
-            // Rune glow — blue-white cold fire
+            // Rune glow ÔÇö blue-white cold fire
             AddPointLight(worldRoot.transform, new Vector3(0, 8f, 55),   new Color(0.35f, 0.58f, 1.0f), 3.0f, 16f, "Rune Core Glow");
             AddPointLight(worldRoot.transform, new Vector3(0, 12f, 55),  new Color(0.50f, 0.70f, 1.0f), 1.5f, 8f,  "Rune Top Glow");
 
@@ -246,10 +254,10 @@ namespace NordicWilds.EditorTools
             CreateBurialMound(new Vector3( 38f, 0, 52f), worldRoot.transform, stoneMat, snowMat);
             CreateBurialMound(new Vector3(-18f, 0, 62f), worldRoot.transform, mossRockMat, snowDirtyMat);
 
-            // Burial ship on the hill behind the runestone — chieftain's send-off
+            // Burial ship on the hill behind the runestone ÔÇö chieftain's send-off
             CreateBurialShipOnHill(new Vector3(-5f, 4f, 66f), worldRoot.transform, woodDarkMat, metalMat, ashMat);
 
-            // ── Frostheim Village ─────────────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Village ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  Layout: great hall anchors north, forge + well form the east quad,
             //  meadery and huts fill west. Paths connect everything.
 
@@ -259,10 +267,10 @@ namespace NordicWilds.EditorTools
             // Great Mead Hall (village centrepiece)
             CreateGreatHall(new Vector3(0f, 0f, 22f), worldRoot.transform, woodMat, woodDarkMat, thatchMat, stoneMat, pathMat, bannerRedMat);
 
-            // Meadery — underground cellar entrance (hatch + steps going down)
+            // Meadery ÔÇö underground cellar entrance (hatch + steps going down)
             CreateMeadery(new Vector3(-30f, 0f, 18f), worldRoot.transform, stoneMat, woodMat, woodDarkMat, gildedMat);
 
-            // Blacksmith forge (design landmark #3 — always smoking)
+            // Blacksmith forge (design landmark #3 ÔÇö always smoking)
             CreateForge(new Vector3(22f, 0f, 0f), worldRoot.transform, stoneMat, woodMat, metalMat, coalMat, ironRustMat, gildedMat);
 
             // Stone well with detailed rim and bucket
@@ -271,7 +279,7 @@ namespace NordicWilds.EditorTools
             // Viking longboat docked at the frozen lake
             CreateLongboat(new Vector3(58f, 0.15f, -4f), worldRoot.transform, woodMat, woodDarkMat, metalMat, bannerRedMat);
 
-            // Huts — varied sizes, organic placement
+            // Huts ÔÇö varied sizes, organic placement
             CreateHut(new Vector3(-26f, 0f,  14f), worldRoot.transform, woodMat, thatchMat, stoneMat, 0f);
             CreateHut(new Vector3( 32f, 0f,   4f), worldRoot.transform, woodMat, thatchMat, stoneMat, 25f);
             CreateHut(new Vector3(-16f, 0f, -12f), worldRoot.transform, woodMat, thatchMat, stoneMat, -15f);
@@ -286,7 +294,7 @@ namespace NordicWilds.EditorTools
             // Collapsed / burned hut (battle scar / storytelling)
             CreateCollapsedHut(new Vector3(38f, 0f, 18f), worldRoot.transform, charMat, ashMat, woodDarkMat);
 
-            // Campfire safe zone — with full log seating
+            // Campfire safe zone ÔÇö with full log seating
             CreateCampfireSafeZone(new Vector3(-14f, 0f, 7f), worldRoot.transform, stoneMat, woodMat);
 
             // Village torches, banners, and dressing
@@ -304,14 +312,14 @@ namespace NordicWilds.EditorTools
             CreateBanner(new Vector3( -5f,5f, 42f), worldRoot.transform, bannerBlackMat, woodDarkMat);
             CreateBanner(new Vector3(  5f,5f, 42f), worldRoot.transform, bannerBlackMat, woodDarkMat);
 
-            // Mass-grave pit (dark lore, design contrast — keeps players unsettled)
+            // Mass-grave pit (dark lore, design contrast ÔÇö keeps players unsettled)
             CreateMassGravePit(new Vector3(55f, 0f, 45f), worldRoot.transform, mudMat, bonesMat, stoneMat);
 
-            // Collapsed / ruined bridge (over a dry gully — storytelling prop)
+            // Collapsed / ruined bridge (over a dry gully ÔÇö storytelling prop)
             CreateCollapsedBridge(new Vector3(-50f, 0f, -10f), worldRoot.transform, stoneMat, woodDarkMat, ironRustMat);
 
-            // ── Frostheim Foliage & Environmental Scatter ──────────────────────────
-            // Pine forest — density gradient (thicker at edges, open near village)
+            // ÔöÇÔöÇ Frostheim Foliage & Environmental Scatter ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
+            // Pine forest ÔÇö density gradient (thicker at edges, open near village)
             for (int i = 0; i < 820; i++)
             {
                 Vector3 pos = new Vector3(Random.Range(-195f, 195f), 0.5f, Random.Range(-195f, 195f));
@@ -358,7 +366,7 @@ namespace NordicWilds.EditorTools
                     Random.Range(-20,20), Random.Range(0,360), Random.Range(-20,20));
             }
 
-            // ── Frostheim → Yamato Portal ──────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim ÔåÆ Yamato Portal ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreatePortalGateway(
                 "Portal Gateway (To Yamato)",
                 new Vector3(6f, 0f, -16f),
@@ -370,12 +378,12 @@ namespace NordicWilds.EditorTools
                 new Vector3(10000, 2f, 10000),
                 isReturn: false);
 
-            // ── Frostheim Weather System ───────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Weather System ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateBlizzard(worldRoot.transform);
             CreateAuroraBorealis(worldRoot.transform);
             CreateGodraysOvercast(worldRoot.transform, new Color(0.65f,0.75f,0.95f));
 
-            // ── Frostheim Wildlife ─────────────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Wildlife ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             Material squirrelMat = MakeMat(null,0.18f); squirrelMat.color = new Color(0.40f,0.25f,0.10f);
             Material foxMat      = MakeMat(null,0.10f); foxMat.color      = new Color(0.90f,0.93f,0.97f);
             Material wolfMat     = MakeMat(null,0.18f); wolfMat.color     = new Color(0.22f,0.22f,0.26f);
@@ -393,7 +401,7 @@ namespace NordicWilds.EditorTools
             for (int i = 0; i < 8; i++)
                 CreateAnimal("Elk",       new Vector3(Random.Range(-80f,80f),0.8f, Random.Range(20f,80f)),  new Vector3(1.2f,2.2f,2.2f),  elkMat,      2.5f,worldRoot.transform);
 
-            // ── Frostheim Enemies ──────────────────────────────────────────────────
+            // ÔöÇÔöÇ Frostheim Enemies ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             Material draugrMat    = MakeMat(null,0.08f); draugrMat.color   = new Color(0.78f,0.10f,0.10f);
             Material berserkMat   = MakeMat(null,0.10f); berserkMat.color  = new Color(0.62f,0.04f,0.04f);
             Material jarlMat      = MakeMat(null,0.35f); jarlMat.color     = new Color(0.82f,0.65f,0.22f); // gilded jarl
@@ -411,10 +419,10 @@ namespace NordicWilds.EditorTools
             CreateEnemy("Jarl Champion",
                 new Vector3(4f, 1f, 62f), jarlMat, hitFlashMat, worldRoot.transform);
 
-            // ── YAMATO Realm ────────────────────────────────────────────────────────
+            // ÔöÇÔöÇ YAMATO Realm ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateYamatoRealm(worldRoot.transform);
 
-            // ── Player, Camera, Encounter ───────────────────────────────────────────
+            // ÔöÇÔöÇ Player, Camera, Encounter ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             GameObject player = SetupPlayer("Player");
             player.transform.position = new Vector3(0, 1f, -22f);
 
@@ -428,22 +436,22 @@ namespace NordicWilds.EditorTools
 
             CreateMinimalUI();
 
-            Debug.Log("═══ BUILD COMPLETE — FROSTHEIM ←→ YAMATO  ═══");
+            Debug.Log("ÔòÉÔòÉÔòÉ BUILD COMPLETE ÔÇö FROSTHEIM ÔåÉÔåÆ YAMATO  ÔòÉÔòÉÔòÉ");
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
-        //  YAMATO  —  FEUDAL JAPAN REALM
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+        //  YAMATO  ÔÇö  FEUDAL JAPAN REALM
         //  All coordinates offset by +10 000 on X and Z.
         //  Design language: disciplined geometry, layered rooflines,
         //  controlled negative space, warm gold / vermillion / indigo.
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreateYamatoRealm(Transform worldRoot)
         {
             Vector3 O = new Vector3(10000f, 0f, 10000f);
 
-            // ── Yamato Materials (warm, deliberate palette) ────────────────────────
+            // ÔöÇÔöÇ Yamato Materials (warm, deliberate palette) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             Material grassMat    = MakeMat(GenNoise(new Color(0.40f,0.64f,0.30f), new Color(0.30f,0.54f,0.22f), 16f), 0.04f);
             Material mossMat     = MakeMat(GenNoise(new Color(0.28f,0.48f,0.20f), new Color(0.18f,0.38f,0.13f), 20f), 0.06f);
             Material stoneMat    = MakeMat(GenNoise(new Color(0.56f,0.56f,0.60f), new Color(0.40f,0.40f,0.44f), 24f), 0.28f);
@@ -467,12 +475,12 @@ namespace NordicWilds.EditorTools
             Material tileGrayM   = MakeMat(GenNoise(new Color(0.58f,0.58f,0.62f), new Color(0.44f,0.44f,0.48f), 22f), 0.35f);
             Material metalMat    = MakeMat(null,0.78f); metalMat.color   = new Color(0.66f,0.71f,0.76f);
 
-            // ── Yamato Lighting ────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Yamato Lighting ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  We don't change the global directional here (player can only be in
             //  one realm at a time; the JapanPortal script handles the crossfade).
             //  Instead we seed many warm point-lights throughout the realm.
 
-            // ── Yamato Terrain ─────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Yamato Terrain ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  FIVE-LAYER DEPTH for Yamato:
             //   1. Soft sky haze (particles)
             //   2. Misty mountain backdrop
@@ -480,15 +488,15 @@ namespace NordicWilds.EditorTools
             //   4. Shrine complex and village on gentle hill
             //   5. Stone-paved paths, koi pond, gardens at ground level
 
-            // Ground plane — warm grass
+            // Ground plane ÔÇö warm grass
             CreateBlock("Yamato Ground",   O + new Vector3(0,-0.50f,0), new Vector3(240,1.0f,240), grassMat, worldRoot);
             CreateBlock("Yamato Subsoil",  O + new Vector3(0,-1.20f,0), new Vector3(240,1.0f,240), mossMat,  worldRoot);
 
-            // Shrine hill — gentle asymmetric rise
+            // Shrine hill ÔÇö gentle asymmetric rise
             CreateBlock("Shrine Hill Base",  O + new Vector3( 0, 1.2f, 72f), new Vector3(58,2.5f,70), grassMat, worldRoot);
             CreateBlock("Shrine Hill Crest", O + new Vector3( 0, 2.8f, 75f), new Vector3(38,2.0f,48), grassMat, worldRoot);
 
-            // Distant misty mountains (Layer 2) — six peaks, varied height
+            // Distant misty mountains (Layer 2) ÔÇö six peaks, varied height
             float[] mxArr = { -130f,-80f,-30f,30f,80f,130f };
             float[] mhArr = {   22f, 35f, 28f,32f,26f, 30f };
             for (int i = 0; i < 6; i++)
@@ -525,15 +533,15 @@ namespace NordicWilds.EditorTools
                 patch.transform.rotation = Quaternion.Euler(0,Random.Range(0,360),0);
             }
 
-            // ── Dry Moat Castle Approach (south entry) ────────────────────────────
+            // ÔöÇÔöÇ Dry Moat Castle Approach (south entry) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateDryMoatApproach(O, worldRoot, stoneMat, darkStone, woodMat, redMat, pathMat);
 
-            // ── Torii Gate Procession (Fushimi Inari-style) ───────────────────────
+            // ÔöÇÔöÇ Torii Gate Procession (Fushimi Inari-style) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             //  Rule of Thirds: procession occupies the central third of the Z axis
             for (int i = 0; i < 10; i++)
                 CreateToriiGate("Torii "+i, O+new Vector3(0,0f,(i*9f)-14f), redMat, woodMat, worldRoot);
 
-            // ── Stone-paved main path ──────────────────────────────────────────────
+            // ÔöÇÔöÇ Stone-paved main path ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i = 0; i < 24; i++)
             {
                 var slab = CreateBlock("Stone Slab",
@@ -542,7 +550,7 @@ namespace NordicWilds.EditorTools
                 slab.transform.rotation = Quaternion.Euler(0,Random.Range(-4,4),0);
             }
 
-            // ── Stone Lanterns flanking path ──────────────────────────────────────
+            // ÔöÇÔöÇ Stone Lanterns flanking path ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i = 0; i < 20; i++)
             {
                 float z = (i*5.2f)-12f;
@@ -550,51 +558,51 @@ namespace NordicWilds.EditorTools
                 CreateStoneLantern(O+new Vector3( 5.2f,0,z), worldRoot, stoneMat);
             }
 
-            // ── Shrine Approach: Wide Stone Steps ─────────────────────────────────
+            // ÔöÇÔöÇ Shrine Approach: Wide Stone Steps ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i = 0; i < 12; i++)
                 CreateBlock("Shrine Step "+i,
                     O+new Vector3(0,(i*0.30f)+0.6f,56f+(i*0.55f)),
                     new Vector3(12f,0.30f,0.60f), stoneMat, worldRoot);
 
-            // ── Shrine Complex on the Hill ─────────────────────────────────────────
+            // ÔöÇÔöÇ Shrine Complex on the Hill ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateMainShrine(    O+new Vector3(  0f,5f,76f), worldRoot, redMat,darkRedMat,woodMat,goldMat,stoneMat,pathMat);
             CreatePagoda(        O+new Vector3( 26f,5f,76f), worldRoot, redMat,darkRedMat,woodMat,tileGrayM);
             CreateBellTower(     O+new Vector3(-26f,5f,76f), worldRoot, woodMat,goldMat,stoneMat);
             CreateNohTheatre(    O+new Vector3( -8f,5f,92f), worldRoot, woodMat,woodLightMat,stoneMat,redMat);
             CreateButsudanAltar( O+new Vector3(  8f,5f,92f), worldRoot, woodMat,goldMat,redMat,paperMat);
 
-            // ── Armoury (midnight black, north-east of shrine hill) ────────────────
+            // ÔöÇÔöÇ Armoury (midnight black, north-east of shrine hill) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateArmoury(O+new Vector3(44f,5f,78f), worldRoot, charcoalMat,darkStone,metalMat,redMat);
 
-            // ── Kyudojo — Ceremonial Archery Range ────────────────────────────────
+            // ÔöÇÔöÇ Kyudojo ÔÇö Ceremonial Archery Range ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateKyudojo(O+new Vector3(52f,0f,20f), worldRoot, woodMat,stoneMat,pathMat,indigoMat);
 
-            // ── Koi Pond with waterfall cascade ───────────────────────────────────
+            // ÔöÇÔöÇ Koi Pond with waterfall cascade ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateKoiPond(O+new Vector3(-30f,0,18f), worldRoot, stoneMat,waterMat,goldMat);
             CreateWaterfallCascade(O+new Vector3(-42f,0,22f), worldRoot, waterMat,stoneMat,mossMat);
 
-            // ── Zen Garden ────────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Zen Garden ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateZenGarden(O+new Vector3(30f,0,15f), worldRoot, stoneMat,sandMat);
 
-            // ── Gorintō Stupa Field (stone memorial towers, layer of dread) ────────
+            // ÔöÇÔöÇ Gorint┼ì Stupa Field (stone memorial towers, layer of dread) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateGorintoStupaField(O+new Vector3(-55f,0,55f), worldRoot, stoneMat, darkStone, mossMat);
 
-            // ── Ornamental Bridge over the stream ─────────────────────────────────
+            // ÔöÇÔöÇ Ornamental Bridge over the stream ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateOrnamentalBridge(O+new Vector3(-10f,0,-20f), worldRoot, redMat,woodMat,stoneMat,waterMat);
 
-            // ── Watermill on the stream ────────────────────────────────────────────
+            // ÔöÇÔöÇ Watermill on the stream ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateWatermill(O+new Vector3(-30f,0,-25f), worldRoot, woodMat,stoneMat,waterMat);
 
-            // ── Wisteria Arcade (visual corridor, Layer 3 depth cue) ──────────────
+            // ÔöÇÔöÇ Wisteria Arcade (visual corridor, Layer 3 depth cue) ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateWisteriaArcade(O+new Vector3(20f,0,40f), worldRoot, woodMat,wisteriaM,stoneMat);
 
-            // ── Lantern Festival Pennants across the path ──────────────────────────
+            // ÔöÇÔöÇ Lantern Festival Pennants across the path ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateFestivalPennants(O, worldRoot, redMat,goldMat,woodMat,paperMat);
 
-            // ── Tea House ─────────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Tea House ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateTeaHouse(O+new Vector3(-22f,0,32f), worldRoot, woodMat,paperMat,redMat,stoneMat);
 
-            // ── Bamboo Groves ─────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Bamboo Groves ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i = 0; i < 80; i++)
             {
                 Vector3 bp = O+new Vector3(Random.Range(22f,92f),0,Random.Range(-80f,80f));
@@ -606,14 +614,14 @@ namespace NordicWilds.EditorTools
                 if (Mathf.Abs(bp.z-O.z) > 4f) CreateBambooClump(bp, worldRoot, bambooMat);
             }
 
-            // ── Sakura Trees ──────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Sakura Trees ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i = 0; i < 220; i++)
             {
                 Vector3 tp = O+new Vector3(Random.Range(-108f,108f),0.5f,Random.Range(-108f,108f));
                 if (Mathf.Abs(tp.x-O.x) > 5f) CreateSakuraTree(tp, worldRoot, sakuraMat, woodMat);
             }
 
-            // ── Bamboo Perimeter Fence ─────────────────────────────────────────────
+            // ÔöÇÔöÇ Bamboo Perimeter Fence ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f+i*5f,0,-65f), worldRoot,bambooMat,woodMat,false);
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f+i*5f,0, 65f), worldRoot,bambooMat,woodMat,false);
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f,0,-65f+i*5f), worldRoot,bambooMat,woodMat,true);
@@ -622,11 +630,11 @@ namespace NordicWilds.EditorTools
             // Ninja rooftop path cables (rope-climb shortcuts above key buildings)
             CreateNinjaRooftopPaths(O, worldRoot, charcoalMat, woodMat);
 
-            // ── Cherry Blossom & Morning Mist Weather ─────────────────────────────
+            // ÔöÇÔöÇ Cherry Blossom & Morning Mist Weather ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreateCherryBlossomWeather(O, worldRoot);
             CreateMorningMist(O, worldRoot);
 
-            // ── Yamato Wildlife ───────────────────────────────────────────────────
+            // ÔöÇÔöÇ Yamato Wildlife ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             Material deerMat   = MakeMat(null,0.12f); deerMat.color  = new Color(0.64f,0.46f,0.28f);
             Material craneMat  = MakeMat(null,0.12f); craneMat.color = Color.white;
             Material foxMatJ   = MakeMat(null,0.10f); foxMatJ.color  = new Color(0.90f,0.55f,0.20f); // red fox
@@ -634,7 +642,7 @@ namespace NordicWilds.EditorTools
             for (int i=0;i<10;i++) CreateAnimal("Crane", O+new Vector3(Random.Range(-55f,55f),0.4f,Random.Range(-55f,55f)),new Vector3(0.6f,1.0f,0.4f),craneMat,2.5f,worldRoot);
             for (int i=0;i<8; i++) CreateAnimal("Red Fox",O+new Vector3(Random.Range(-50f,50f),0.4f,Random.Range(-50f,50f)),new Vector3(0.8f,1.0f,1.5f),foxMatJ, 4.0f,worldRoot);
 
-            // ── Yamato Enemies ─────────────────────────────────────────────────────
+            // ÔöÇÔöÇ Yamato Enemies ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             Material samuraiMat = MakeMat(null,0.28f); samuraiMat.color = new Color(0.12f,0.18f,0.32f);
             Material ninjaMat   = MakeMat(null,0.04f); ninjaMat.color   = new Color(0.04f,0.04f,0.05f);
             Material ronin      = MakeMat(null,0.15f); ronin.color      = new Color(0.38f,0.32f,0.24f); // wandering ronin
@@ -647,7 +655,7 @@ namespace NordicWilds.EditorTools
             // Oni mini-boss at the shrine gate
             CreateEnemy("Oni Guardian", O+new Vector3(0f,1f,55f), oniMat, yHitFlash, worldRoot);
 
-            // ── Return Portal → Frostheim ──────────────────────────────────────────
+            // ÔöÇÔöÇ Return Portal ÔåÆ Frostheim ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ
             CreatePortalGateway(
                 "Return Portal (To Frostheim)",
                 O+new Vector3(12f,0f,6f),
@@ -661,9 +669,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
-        //  FROSTHEIM — NEW LANDMARK BUILDERS
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+        //  FROSTHEIM ÔÇö NEW LANDMARK BUILDERS
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreateDistantMountains(Transform parent,
             Material stone, Material snow, Material dark)
@@ -717,7 +725,7 @@ namespace NordicWilds.EditorTools
             CreateBlock("Cliff Left",  pos+new Vector3(-8f,8f,0),  new Vector3(6f,20f,8f),   stone,   wf.transform);
             CreateBlock("Cliff Right", pos+new Vector3( 8f,8f,0),  new Vector3(6f,20f,8f),   stone,   wf.transform);
 
-            // Frozen ice columns — main fall
+            // Frozen ice columns ÔÇö main fall
             for (int i = 0; i < 5; i++)
             {
                 float ox = -2.5f + i * 1.2f;
@@ -729,7 +737,7 @@ namespace NordicWilds.EditorTools
                 ic.transform.rotation = Quaternion.Euler(Random.Range(-3,3),0,Random.Range(-4,4));
             }
 
-            // Splash pool at the base — cracked ice
+            // Splash pool at the base ÔÇö cracked ice
             CreateBlock("Splash Pool",  pos+new Vector3(0,-0.35f,-2f), new Vector3(10f,0.15f,5f), ice,     wf.transform);
             CreateBlock("Pool Crack 1", pos+new Vector3(2f,-0.28f,-2f),new Vector3(0.12f,0.1f,4f),iceDeep, wf.transform);
             CreateBlock("Pool Crack 2", pos+new Vector3(-1f,-0.28f,-1f),new Vector3(0.1f,0.1f,3f),iceDeep, wf.transform);
@@ -816,7 +824,7 @@ namespace NordicWilds.EditorTools
             // Arrow slit windows
             CreateBlock("Slit N",        pos+new Vector3(0,7f,2.28f),new Vector3(0.4f,1f,0.1f), stone, tower.transform);
             CreateBlock("Slit E",        pos+new Vector3(2.28f,7f,0),new Vector3(0.1f,1f,0.4f), stone, tower.transform);
-            // Roof — conical approximation (4 slanted panels)
+            // Roof ÔÇö conical approximation (4 slanted panels)
             CreateBlock("Roof N",  pos+new Vector3(0f,11.5f, 1.5f), new Vector3(5f,0.5f,4f), wood, tower.transform).transform.rotation = Quaternion.Euler(-30,0,0);
             CreateBlock("Roof S",  pos+new Vector3(0f,11.5f,-1.5f), new Vector3(5f,0.5f,4f), wood, tower.transform).transform.rotation = Quaternion.Euler( 30,0,0);
             CreateBlock("Roof E",  pos+new Vector3( 1.5f,11.5f,0), new Vector3(4f,0.5f,5f), wood, tower.transform).transform.rotation = Quaternion.Euler(0,0, 30);
@@ -835,7 +843,7 @@ namespace NordicWilds.EditorTools
             Material wood, Material bones)
         {
             CreateBlock("Skull Post", pos+new Vector3(0,1.5f,0), new Vector3(0.22f,3f,0.22f), wood, parent);
-            // Skull approximation — stacked cubes
+            // Skull approximation ÔÇö stacked cubes
             CreateBlock("Skull Body", pos+new Vector3(0,3.2f,0), new Vector3(0.5f,0.45f,0.5f), bones, parent);
             CreateBlock("Skull Jaw",  pos+new Vector3(0,2.85f,0), new Vector3(0.4f,0.20f,0.4f), bones, parent);
             // Crossbar with two more skulls
@@ -904,7 +912,7 @@ namespace NordicWilds.EditorTools
 
         private static void CreateAleBarel(Vector3 pos, Transform parent, Material wood, Material metal)
         {
-            // Barrel — cylinder approximated with cube + ring bands
+            // Barrel ÔÇö cylinder approximated with cube + ring bands
             CreateBlock("Barrel Body", pos, new Vector3(1.0f,1.2f,1.0f), wood, parent);
             CreateBlock("Band Top",    pos+new Vector3(0,0.45f,0), new Vector3(1.12f,0.12f,1.12f), metal, parent);
             CreateBlock("Band Mid",    pos+new Vector3(0,0,0),     new Vector3(1.15f,0.12f,1.15f), metal, parent);
@@ -1075,7 +1083,7 @@ namespace NordicWilds.EditorTools
 
         private static void CreateGodraysOvercast(Transform parent, Color col)
         {
-            // Volumetric "god-ray" shafts through overcast sky — point lights high up
+            // Volumetric "god-ray" shafts through overcast sky ÔÇö point lights high up
             // angled downward to simulate scattering
             for (int i=0; i<6; i++)
             {
@@ -1090,7 +1098,7 @@ namespace NordicWilds.EditorTools
                 l.spotAngle  = 22f;
                 l.shadows    = LightShadows.None;
                 shaft.transform.rotation = Quaternion.Euler(Random.Range(80f,90f),Random.Range(0f,360f),0f);
-                // Shaft visual — thin tall box
+                // Shaft visual ÔÇö thin tall box
                 CreateBlock("Ray Volume "+i, shaft.transform.position+new Vector3(0,-10f,0),
                     new Vector3(1.5f,20f,1.5f), MakeMat(null,0f) , parent).GetComponent<Renderer>().sharedMaterial.color =
                     new Color(col.r,col.g,col.b,0.04f);
@@ -1098,9 +1106,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
-        //  FROSTHEIM — EXISTING LANDMARK BUILDERS (enhanced)
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+        //  FROSTHEIM ÔÇö EXISTING LANDMARK BUILDERS (enhanced)
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreateStoneCircle(Vector3 centre, float radius, int count,
             Material mat, Transform parent)
@@ -1240,7 +1248,7 @@ namespace NordicWilds.EditorTools
             boat.transform.rotation = Quaternion.Euler(0,18,0);
             boat.transform.SetParent(parent);
 
-            // Hull — three-piece for convex side profile
+            // Hull ÔÇö three-piece for convex side profile
             CreateBlock("Hull Bottom",  pos+new Vector3(0,0.6f,  0), new Vector3(3.8f,1.0f,16f), wood,     boat.transform);
             CreateBlock("Hull L",       pos+new Vector3(-2.4f,1.7f,0),new Vector3(0.55f,1.8f,14f),wood,    boat.transform);
             CreateBlock("Hull R",       pos+new Vector3( 2.4f,1.7f,0),new Vector3(0.55f,1.8f,14f),wood,    boat.transform);
@@ -1259,7 +1267,7 @@ namespace NordicWilds.EditorTools
                 CreateBlock("Oar L "+i, pos+new Vector3(-3.2f,2.2f,-6f+i*2.2f),new Vector3(0.16f,0.16f,4.5f),wood,boat.transform).transform.rotation = Quaternion.Euler(0,0,22);
                 CreateBlock("Oar R "+i, pos+new Vector3( 3.2f,2.2f,-6f+i*2.2f),new Vector3(0.16f,0.16f,4.5f),wood,boat.transform).transform.rotation = Quaternion.Euler(0,0,-22);
             }
-            // Round shields — 5 each side
+            // Round shields ÔÇö 5 each side
             for (int i=0;i<5;i++)
             {
                 CreateBlock("Shield L "+i, pos+new Vector3(-2.85f,2.15f,-5f+i*2.5f),new Vector3(0.12f,1.3f,1.3f),metal,boat.transform);
@@ -1269,7 +1277,7 @@ namespace NordicWilds.EditorTools
             CreateBlock("Mast",       pos+new Vector3(0,6f,0),    new Vector3(0.35f,12f,0.35f),wood,    boat.transform);
             CreateBlock("Crossbeam",  pos+new Vector3(0,10.5f,0), new Vector3(6f,0.35f,0.35f),  wood,    boat.transform);
             CreateBlock("Furled Sail",pos+new Vector3(0,8.5f,0),  new Vector3(5.8f,4f,0.15f),   banner,  boat.transform);
-            // Cargo — two chests amidship
+            // Cargo ÔÇö two chests amidship
             for (int i=0;i<2;i++)
                 CreateAleBarel(pos+new Vector3(-0.8f+i*1.6f,1.8f,0), boat.transform, woodDark, metal);
         }
@@ -1386,7 +1394,7 @@ namespace NordicWilds.EditorTools
             CreateBlock("Shelter Post L",pos+new Vector3(-3.5f,2.5f,-18f),new Vector3(0.5f,5f,0.5f), wood, dojo.transform);
             CreateBlock("Shelter Post R",pos+new Vector3( 3.5f,2.5f,-18f),new Vector3(0.5f,5f,0.5f), wood, dojo.transform);
             CreateBlock("Shelter Roof",  pos+new Vector3(0,5.5f,-18f),  new Vector3(9f,0.5f,4f),    wood, dojo.transform);
-            // Targets (makiwara) — indigo-circled boards
+            // Targets (makiwara) ÔÇö indigo-circled boards
             for (int i=0;i<3;i++)
             {
                 CreateBlock("Target Board "+i,
@@ -1410,12 +1418,12 @@ namespace NordicWilds.EditorTools
             }
         }
 
-        // FIX: Removed the space from "CreateGorinto StupaField" → "CreateGorintoStupaField"
+        // FIX: Removed the space from "CreateGorinto StupaField" ÔåÆ "CreateGorintoStupaField"
         private static void CreateGorintoStupaField(Vector3 pos, Transform parent,
             Material stone, Material dark, Material moss)
         {
-            // Gorintō = five-element stone stupa (memorial tower)
-            // Field of 12, arranged in irregular rows — ancient graveyard feel
+            // Gorint┼ì = five-element stone stupa (memorial tower)
+            // Field of 12, arranged in irregular rows ÔÇö ancient graveyard feel
             GameObject field = new GameObject("Gorinto Stupa Field");
             field.transform.SetParent(parent);
             field.transform.position = pos;
@@ -1455,7 +1463,7 @@ namespace NordicWilds.EditorTools
             // Approach stones
             CreateBlock("Stone N",    pos+new Vector3(0, 0.1f,-4f),new Vector3(5f,0.2f,4f),  stone, bridge.transform);
             CreateBlock("Stone S",    pos+new Vector3(0, 0.1f, 4f),new Vector3(5f,0.2f,4f),  stone, bridge.transform);
-            // Arched bridge deck (arched via rotation trick — two sloped halves)
+            // Arched bridge deck (arched via rotation trick ÔÇö two sloped halves)
             var deckL = CreateBlock("Deck L",pos+new Vector3(0,0.6f,-1.2f),new Vector3(5.5f,0.3f,3.5f),red,bridge.transform);
             deckL.transform.rotation = Quaternion.Euler(18,0,0);
             var deckR = CreateBlock("Deck R",pos+new Vector3(0,0.6f, 1.2f),new Vector3(5.5f,0.3f,3.5f),red,bridge.transform);
@@ -1606,9 +1614,9 @@ namespace NordicWilds.EditorTools
             paths.transform.SetParent(parent);
 
             float[,] routes = {
-                {-22f,9f,32f, -26f,6f,76f},  // tea house → shrine hill
-                { 26f,5f,76f,  44f,8f,78f},  // pagoda → armoury
-                { 44f,8f,78f,  52f,5f,20f},  // armoury → kyudojo
+                {-22f,9f,32f, -26f,6f,76f},  // tea house ÔåÆ shrine hill
+                { 26f,5f,76f,  44f,8f,78f},  // pagoda ÔåÆ armoury
+                { 44f,8f,78f,  52f,5f,20f},  // armoury ÔåÆ kyudojo
             };
             for (int i=0;i<3;i++)
             {
@@ -1632,7 +1640,7 @@ namespace NordicWilds.EditorTools
 
         private static void CreateMorningMist(Vector3 origin, Transform parent)
         {
-            // Low-lying volumetric mist layer — sits at Y=0..3
+            // Low-lying volumetric mist layer ÔÇö sits at Y=0..3
             GameObject mist = new GameObject("Morning Mist (Volumetric)");
             mist.transform.position = origin+new Vector3(0,1.5f,0);
             mist.transform.SetParent(parent);
@@ -1670,9 +1678,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
-        //  YAMATO — EXISTING PROP BUILDERS (enhanced)
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+        //  YAMATO ÔÇö EXISTING PROP BUILDERS (enhanced)
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreateStoneLantern(Vector3 pos, Transform parent, Material stone)
         {
@@ -1778,7 +1786,7 @@ namespace NordicWilds.EditorTools
                 float ox = Random.Range(-1.4f,1.4f);
                 float oz = Random.Range(-1.4f,1.4f);
                 float h  = Random.Range(7f,12f);
-                // Stalk — two-tone: darker base
+                // Stalk ÔÇö two-tone: darker base
                 Material bambooDark = MakeMat(null,0.12f); bambooDark.color = new Color(0.34f,0.58f,0.18f);
                 CreateBlock("Stalk",pos+new Vector3(ox,h*0.5f,oz),new Vector3(0.20f,h,0.20f),i%3==0?bambooDark:bamboo,clump.transform);
                 // Node rings (characteristic bamboo segments)
@@ -1817,7 +1825,7 @@ namespace NordicWilds.EditorTools
             CreateBlock("Roof Lower",  pos+new Vector3(0,9.5f,0),  new Vector3(20f,0.7f,15f), red,      shrine.transform);
             CreateBlock("Roof Upper",  pos+new Vector3(0,11.8f,0), new Vector3(13f,0.7f,10f), darkRed,  shrine.transform);
             CreateBlock("Ridge Beam",  pos+new Vector3(0,12.8f,0), new Vector3(0.6f,0.6f,11f),wood,     shrine.transform);
-            // Gold finials (chigi) — four
+            // Gold finials (chigi) ÔÇö four
             foreach (float fx in new[]{-7f,7f}) foreach (float fz in new[]{-5f,5f})
                 CreateBlock("Finial",  pos+new Vector3(fx,13.2f,fz),new Vector3(0.35f,1.8f,0.35f),gold,shrine.transform);
             // Curved eave tips
@@ -1887,7 +1895,7 @@ namespace NordicWilds.EditorTools
             CreateBlock("Wall Back",  pos+new Vector3(0,3.5f,4f), new Vector3(9f,6f,0.45f),  wood,  th.transform);
             CreateBlock("Wall L",     pos+new Vector3(-4.5f,3.5f,0),new Vector3(0.45f,6f,8f),wood,  th.transform);
             CreateBlock("Wall R",     pos+new Vector3( 4.5f,3.5f,0),new Vector3(0.45f,6f,8f),wood,  th.transform);
-            // Shoji panels on front — slightly offset from each other
+            // Shoji panels on front ÔÇö slightly offset from each other
             CreateBlock("Shoji L",    pos+new Vector3(-2f,3.5f,-3.5f),new Vector3(3.8f,5f,0.18f), paper, th.transform);
             CreateBlock("Shoji R",    pos+new Vector3( 2f,3.5f,-3.5f),new Vector3(3.8f,5f,0.18f), paper, th.transform);
             // Engawa (cedar veranda)
@@ -1966,9 +1974,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
-        //  SHARED BUILDERS — Portals, Sakura, Torii, Pagoda
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
+        //  SHARED BUILDERS ÔÇö Portals, Sakura, Torii, Pagoda
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreatePortalGateway(string name, Vector3 pos, Transform parent,
             Material pillarMat, Color glowColor, Color lightColor, Color particleColor,
@@ -2119,9 +2127,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
         //  PLAYER / CAMERA / COMBAT / UI
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static GameObject SetupPlayer(string name)
         {
@@ -2146,7 +2154,7 @@ namespace NordicWilds.EditorTools
             trail.material   = new Material(Shader.Find("Sprites/Default"))
                                { color = new Color(0.22f,0.82f,1f,0.5f) };
 
-            // Weapon — Leviathan Axe
+            // Weapon ÔÇö Leviathan Axe
             Material weaponMat = MakeMat(null,0.58f); weaponMat.color = new Color(0.35f,0.38f,0.42f);
             Material bladeMat  = MakeMat(null,0.92f); bladeMat.color  = new Color(0.78f,0.92f,1.0f);
             Material runeMat   = MakeMat(null,0.80f); runeMat.color   = new Color(0.30f,0.56f,1.0f);
@@ -2237,9 +2245,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
         //  ENTITY HELPERS
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void CreateAnimal(string name, Vector3 pos, Vector3 scale,
             Material mat, float speed, Transform parent)
@@ -2284,9 +2292,9 @@ namespace NordicWilds.EditorTools
         }
 
 
-        // ╔══════════════════════════════════════════════════════════════════════════╗
+        // ÔòöÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòù
         //  PRIMITIVE HELPERS
-        // ╚══════════════════════════════════════════════════════════════════════════╝
+        // ÔòÜÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòÉÔòØ
 
         private static void AddPointLight(Transform parent, Vector3 localOffset,
             Color color, float intensity, float range, string lightName = "Point Light")
