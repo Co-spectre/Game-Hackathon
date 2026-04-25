@@ -1,0 +1,22 @@
+* text=auto
+
+# Unity assets that should use YAML merge tooling
+*.unity text merge=unityyamlmerge eol=lf
+*.prefab text merge=unityyamlmerge eol=lf
+*.asset text merge=unityyamlmerge eol=lf
+*.mat text merge=unityyamlmerge eol=lf
+*.anim text merge=unityyamlmerge eol=lf
+*.controller text merge=unityyamlmerge eol=lf
+*.meta text eol=lf
+
+# Treat large binary content as binary
+*.png binary lockable
+*.jpg binary lockable
+*.jpeg binary lockable
+*.tga binary lockable
+*.psd binary lockable
+*.fbx binary lockable
+*.wav binary lockable
+*.mp3 binary lockable
+*.ogg binary lockable
+*.mp4 binary lockable

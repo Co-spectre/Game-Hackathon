@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nordic Wilds - Main Menu Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Ocean Background -->
+        <div class="ocean">
+            <div class="wave wave1"></div>
+            <div class="wave wave2"></div>
+        </div>
+
+        <!-- Moon / Sun -->
+        <div class="celestial-body"></div>
+
+        <!-- The Boat -->
+        <div id="boat-container" class="floating">
+            <svg class="boat-svg" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Boat Hull -->
+                <path d="M 20 80 Q 100 100 180 80 L 160 50 L 40 50 Z" fill="#2c1e16" stroke="#1a120c" stroke-width="2"/>
+                <path d="M 20 80 Q 100 100 180 80" fill="none" stroke="#3d2a1f" stroke-width="4"/>
+                
+                <!-- Mast -->
+                <rect x="95" y="10" width="6" height="40" fill="#1a120c"/>
+                
+                <!-- Sail (furled) -->
+                <path d="M 95 15 L 140 20 L 95 30 Z" fill="#6b5c52" opacity="0.8"/>
+                
+                <!-- Character Silhouette -->
+                <!-- Body -->
+                <rect x="75" y="35" width="12" height="15" fill="#0f1115"/>
+                <!-- Head with conical hat (Ronin/Samurai vibe) -->
+                <path d="M 70 35 L 81 25 L 92 35 Z" fill="#0f1115"/>
+                <!-- Sword -->
+                <line x1="85" y1="40" x2="105" y2="45" stroke="#4a5568" stroke-width="2"/>
+            </svg>
+            <div class="reflection"></div>
+        </div>
+
+        <!-- Mist overlay -->
+        <div class="mist mist1"></div>
+        <div class="mist mist2"></div>
+
+        <!-- Foreground Vignette -->
+        <div class="vignette"></div>
+
+        <!-- UI Overlay -->
+        <div id="ui-layer">
+            <h1 class="game-title">NORDIC WILDS<span class="subtitle">YAMATO AWAKENING</span></h1>
+            
+            <nav class="main-menu">
+                <button id="btn-start" class="menu-btn" data-text="Start Game"><span>Start Game</span></button>
+                <button id="btn-settings" class="menu-btn" data-text="Settings"><span>Settings</span></button>
+                <button id="btn-credits" class="menu-btn" data-text="Credits"><span>Credits</span></button>
+            </nav>
+
+            <div class="footer-info">
+                <p>v0.1.0 Pre-Alpha Placeholder</p>
+            </div>
+        </div>
+
+        <!-- Transition Overlay -->
+        <div id="transition-overlay"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
