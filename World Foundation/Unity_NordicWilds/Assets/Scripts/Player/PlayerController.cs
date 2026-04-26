@@ -8,8 +8,10 @@ namespace NordicWilds.Player
     {
         [Header("Movement Stats")]
         [SerializeField] private float baseSpeed = 8f;
+        [SerializeField] private float sprintSpeed = 13f;
         [SerializeField] private float acceleration = 60f;
         [SerializeField] private float deceleration = 60f;
+        public bool IsSprinting { get; private set; }
 
         [Header("Dash Mechanics (Hades Style)")]
         [SerializeField] private float dashForce = 35f;
@@ -87,6 +89,7 @@ namespace NordicWilds.Player
             float horizontal = Input.GetAxisRaw("Horizontal");
             float vertical = Input.GetAxisRaw("Vertical");
             currentInput = new Vector3(horizontal, 0f, vertical).normalized;
+            IsSprinting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
             // Translate input relative to Isometric camera view
             if (isometricCameraTransform != null)
@@ -114,7 +117,8 @@ namespace NordicWilds.Player
 
         private void ApplyMovement()
         {
-            Vector3 targetVelocity = moveDirection * baseSpeed;
+            float speed = IsSprinting && currentInput.sqrMagnitude > 0.01f ? sprintSpeed : baseSpeed;
+            Vector3 targetVelocity = moveDirection * speed;
             Vector3 velocityDiff = targetVelocity - rb.linearVelocity;
             
             // Retain vertical velocity for gravity

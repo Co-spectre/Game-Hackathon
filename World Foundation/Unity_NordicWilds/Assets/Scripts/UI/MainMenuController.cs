@@ -38,9 +38,14 @@ namespace NordicWilds.UI
         public float menuUiFadeDuration = 0.35f;
         public float blackHold        = 0.7f;
         public float fadeInDuration   = 1.4f;
+        public bool autoWalkFromBoatOnStart = false;
+        public Vector3 autoWalkTargetPos = new Vector3(-620f, 1.05f, -628f);
+        public float autoWalkDuration = 2.65f;
+        public int startGameCutsceneIndex = 0;
 
         [Header("Player Visual Hiding")]
         public bool hidePlayerOnMenu = true;
+        public bool startsInYamato = true;
 
         bool isStarting;
         bool buttonsBound;
@@ -60,9 +65,6 @@ namespace NordicWilds.UI
 
             if (cameraDirector != null)
             {
-                cameraDirector.idleEndOffset = cameraDirector.idleOffset;
-                cameraDirector.idleDriftSpeed = 0f;
-                cameraDirector.idleSwayAmplitude = 0f;
                 cameraDirector.SnapToIdle();
             }
 
@@ -238,7 +240,18 @@ namespace NordicWilds.UI
             isStarting = true;
             if (startButton != null) startButton.interactable = false;
             if (quitButton != null) quitButton.interactable = false;
-            StartCoroutine(StartGameSequence());
+            StartCoroutine(StartGameFlow());
+        }
+
+        IEnumerator StartGameFlow()
+        {
+            CutsceneManager manager = CutsceneManager.GetOrCreate();
+            manager.EnsureStartGameCutscene("Cutscenes/img12", 4f, string.Empty);
+
+            if (manager != null && manager.HasCutscene(startGameCutsceneIndex))
+                yield return manager.PlayCutsceneAndWait(startGameCutsceneIndex);
+
+            yield return StartGameSequence();
         }
 
         public void QuitGame()
@@ -338,7 +351,10 @@ namespace NordicWilds.UI
                     if (go != null) Destroy(go);
             }
 
-            ApplyYamatoLighting();
+            if (startsInYamato)
+                ApplyYamatoLighting();
+            else
+                ApplyForestLandingLighting();
 
             if (mainCamera != null)
             {
@@ -375,6 +391,9 @@ namespace NordicWilds.UI
             }
             if (faderGroup != null) faderGroup.alpha = 0f;
 
+            if (autoWalkFromBoatOnStart && !startsInYamato && player != null)
+                yield return AutoWalkPlayerFromBoat();
+
             // Unlock player + spawn HUD if missing
             if (player != null)
             {
@@ -385,16 +404,97 @@ namespace NordicWilds.UI
             {
                 new GameObject("MinimalHUDOverlay").AddComponent<MinimalHUD>();
             }
-            if (Object.FindFirstObjectByType<WorldMapOverlay>() == null)
+            if (startsInYamato && Object.FindFirstObjectByType<WorldMapOverlay>() == null)
             {
                 new GameObject("WorldMapOverlay").AddComponent<WorldMapOverlay>();
             }
-            if (Object.FindFirstObjectByType<YamatoArrivalDialogue>() == null)
+            if (startsInYamato && Object.FindFirstObjectByType<YamatoArrivalDialogue>() == null)
             {
                 new GameObject("YamatoArrivalDialogue").AddComponent<YamatoArrivalDialogue>();
             }
 
             Destroy(gameObject);
+        }
+
+        IEnumerator AutoWalkPlayerFromBoat()
+        {
+            var pCtrl = player.GetComponent<PlayerController>();
+            if (pCtrl != null)
+                pCtrl.SetControlsLocked(true);
+
+            Rigidbody rb = player.GetComponent<Rigidbody>();
+            Vector3 start = player.position;
+            Vector3 end = autoWalkTargetPos;
+            Vector3 direction = end - start;
+            direction.y = 0f;
+            Quaternion targetRotation = direction.sqrMagnitude > 0.01f
+                ? Quaternion.LookRotation(direction.normalized)
+                : player.rotation;
+
+            float t = 0f;
+            while (t < autoWalkDuration)
+            {
+                t += Time.deltaTime;
+                float k = Mathf.Clamp01(t / Mathf.Max(0.01f, autoWalkDuration));
+                float ease = k * k * (3f - 2f * k);
+                Vector3 pos = Vector3.Lerp(start, end, ease);
+
+                player.position = pos;
+                player.rotation = Quaternion.Slerp(player.rotation, targetRotation, Time.deltaTime * 8f);
+
+                if (rb != null)
+                {
+                    rb.position = pos;
+                    rb.rotation = player.rotation;
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                }
+
+                yield return null;
+            }
+
+            player.position = end;
+            player.rotation = targetRotation;
+            if (rb != null)
+            {
+                rb.position = end;
+                rb.rotation = targetRotation;
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+            Physics.SyncTransforms();
+        }
+
+        void ApplyForestLandingLighting()
+        {
+            RenderSettings.skybox = null;
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogDensity = 0.016f;
+            RenderSettings.fogColor = new Color(0.34f, 0.40f, 0.42f);
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.42f, 0.50f, 0.56f);
+            RenderSettings.ambientEquatorColor = new Color(0.30f, 0.36f, 0.34f);
+            RenderSettings.ambientGroundColor = new Color(0.16f, 0.20f, 0.20f);
+            RenderSettings.ambientIntensity = 0.80f;
+            RenderSettings.reflectionIntensity = 0.28f;
+
+            if (mainCamera != null)
+            {
+                mainCamera.clearFlags = CameraClearFlags.SolidColor;
+                mainCamera.backgroundColor = new Color(0.22f, 0.28f, 0.30f);
+                mainCamera.allowHDR = false;
+            }
+
+            var dirLight = Object.FindFirstObjectByType<Light>();
+            if (dirLight != null && dirLight.type == LightType.Directional)
+            {
+                dirLight.color = new Color(0.74f, 0.86f, 0.96f);
+                dirLight.intensity = 0.62f;
+                dirLight.transform.rotation = Quaternion.Euler(24f, -48f, 0f);
+                dirLight.shadows = LightShadows.Soft;
+                dirLight.shadowStrength = 0.48f;
+            }
         }
 
         void ApplyYamatoLighting()

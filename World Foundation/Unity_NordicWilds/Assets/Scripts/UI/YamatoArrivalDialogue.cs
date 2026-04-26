@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 namespace NordicWilds.UI
@@ -6,6 +7,14 @@ namespace NordicWilds.UI
     {
         [SerializeField] private float startDelay = 0.75f;
         [SerializeField] private float charsPerSecond = 42f;
+
+        // Arrival cutscene reel (img3 -> img4 -> img5 -> img6). Played once before the
+        // dialogue panel appears. Indices 7-10 are reserved for these in the cutscene
+        // list (the quest controller uses 0-6).
+        private const int YamatoArrival1Index = 7;
+        private const int YamatoArrival2Index = 8;
+        private const int YamatoArrival3Index = 9;
+        private const int YamatoArrival4Index = 10;
 
         private readonly string[] lines =
         {
@@ -40,6 +49,39 @@ namespace NordicWilds.UI
             portraitFrameTex = MakeTex(new Color(0.92f, 0.74f, 0.30f, 0.55f));
             darkTex = MakeTex(new Color(0.04f, 0.025f, 0.016f, 0.88f));
             delayTimer = startDelay;
+
+            StartCoroutine(PlayArrivalReel());
+        }
+
+        private IEnumerator PlayArrivalReel()
+        {
+            CutsceneManager manager = CutsceneManager.GetOrCreate();
+            if (manager == null)
+                yield break;
+
+            manager.EnsureCutsceneImage(YamatoArrival1Index, "Cutscenes/img3", 5f,
+                "A New Shore",
+                "Narrator:  The longship grinds against pale wood. The wanderer steps off into air that smells of cedar, salt, and something burning slow and sweet.");
+            manager.EnsureCutsceneImage(YamatoArrival2Index, "Cutscenes/img4", 5f,
+                "Lanterns and Stone",
+                "Narrator:  Vermillion gates stand where Frostheim's pines should be. Lanterns swing without wind. Nothing here is hostile yet — only watching.");
+            manager.EnsureCutsceneImage(YamatoArrival3Index, "Cutscenes/img5", 5f,
+                "Yamato",
+                "Narrator:  A village without a name still knows how to greet a stranger. Bowed heads. Quiet eyes. A bell in the distance, rung by no one.");
+            manager.EnsureCutsceneImage(YamatoArrival4Index, "Cutscenes/img6", 5f,
+                "The Sealed Path",
+                "Narrator:  Somewhere past the shrine, a portal hums with the cold of home. To reach it, the wanderer will have to walk all the way through this strange, beautiful place.");
+
+            // Hold the dialogue panel until the reel is done.
+            open = false;
+            delayTimer = 999f;
+
+            yield return manager.PlayCutsceneAndWait(YamatoArrival1Index);
+            yield return manager.PlayCutsceneAndWait(YamatoArrival2Index);
+            yield return manager.PlayCutsceneAndWait(YamatoArrival3Index);
+            yield return manager.PlayCutsceneAndWait(YamatoArrival4Index);
+
+            delayTimer = 0.2f;
         }
 
         private void Update()

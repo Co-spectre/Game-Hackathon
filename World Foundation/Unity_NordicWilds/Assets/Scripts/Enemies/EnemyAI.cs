@@ -35,6 +35,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private float nextAttackTime;
     private Coroutine staggerRoutine;
     private Vector3 spawnAnchor;
+    private bool rushOnStart;
 
     private void Awake()
     {
@@ -63,7 +64,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
 
         spawnAnchor = transform.position;
 
-        currentState = State.Idle;
+        currentState = rushOnStart && playerTarget != null ? State.Chase : State.Idle;
     }
 
     private void OnDestroy()
@@ -122,7 +123,11 @@ public class EnemyAI : MonoBehaviour, IDamageable
             return;
 
         Vector3 moveDirection = direction.normalized;
-        rb.AddForce(moveDirection * speed, ForceMode.Acceleration);
+        if (rushOnStart)
+            rb.linearVelocity = new Vector3(moveDirection.x * speed, rb.linearVelocity.y, moveDirection.z * speed);
+        else
+            rb.AddForce(moveDirection * speed, ForceMode.Acceleration);
+
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection), Time.fixedDeltaTime * 10f);
     }
 
@@ -179,6 +184,32 @@ public class EnemyAI : MonoBehaviour, IDamageable
     public void SetHitFlashMaterial(Material material)
     {
         hitFlashMat = material;
+    }
+
+    public void SetAggression(float newSpeed, float newDetectRange, float newAttackRange)
+    {
+        speed = Mathf.Max(0f, newSpeed);
+        detectRange = Mathf.Max(0f, newDetectRange);
+        attackRange = Mathf.Max(0.1f, newAttackRange);
+    }
+
+    public void RushPlayer()
+    {
+        GameObject playerObj = GameObject.FindWithTag("Player");
+        if (playerObj != null)
+            playerTarget = playerObj.transform;
+
+        if (currentState != State.Dead && playerTarget != null)
+        {
+            rushOnStart = true;
+            currentState = State.Chase;
+            if (rb != null)
+            {
+                rb.WakeUp();
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
+        }
     }
 
     private void HandleDamageTaken(DamageInfo damageInfo)

@@ -132,6 +132,13 @@ namespace NordicWilds.World
                 {
                     new GameObject("WorldMapOverlay").AddComponent<WorldMapOverlay>();
                 }
+                MissionTracker.Set("Chapter 7: Yamato",
+                    "Explore the village and find the return portal beyond the shrine.");
+            }
+            else
+            {
+                MissionTracker.Set("Chapter 8: Return to Frostheim",
+                    "Defend the village. The raiders have come.");
             }
 
             yield return new WaitForSeconds(0.2f);

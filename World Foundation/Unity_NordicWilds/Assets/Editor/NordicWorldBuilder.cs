@@ -66,8 +66,14 @@ namespace NordicWilds.EditorTools
                 EnsureTagExists(t);
 
             // ── Clear ─────────────────────────────────────────────────────────────
-            foreach (string n in new[]{ "Nordic World Root","Player","Isometric Camera Rig" })
-                DestroyImmediate(GameObject.Find(n));
+            foreach (string n in new[]{ "Nordic World Root","Player","Isometric Camera Rig",
+                                         "MinimalHUDOverlay","WorldMapOverlay","YamatoArrivalDialogue",
+                                         "MainMenuCanvas","EventSystem" })
+            {
+                GameObject existing = GameObject.Find(n);
+                if (existing != null)
+                    DestroyImmediate(existing);
+            }
 
             GameObject worldRoot = new GameObject("Nordic World Root");
 
@@ -111,10 +117,10 @@ namespace NordicWilds.EditorTools
             if (dirLight != null && dirLight.type == LightType.Directional)
             {
                 dirLight.color          = new Color(0.52f, 0.66f, 0.96f);
-                dirLight.intensity      = 0.92f;
+                dirLight.intensity      = 0.62f;
                 dirLight.transform.rotation = Quaternion.Euler(28f, -62f, 0f);
                 dirLight.shadows        = LightShadows.Soft;
-                dirLight.shadowStrength = 0.88f;
+                dirLight.shadowStrength = 0.45f;
                 dirLight.shadowBias     = 0.04f;
             }
 
@@ -123,6 +129,8 @@ namespace NordicWilds.EditorTools
             RenderSettings.ambientSkyColor     = new Color(0.35f, 0.44f, 0.65f);
             RenderSettings.ambientEquatorColor = new Color(0.26f, 0.34f, 0.52f);
             RenderSettings.ambientGroundColor  = new Color(0.14f, 0.22f, 0.38f);
+            RenderSettings.ambientIntensity    = 0.75f;
+            RenderSettings.reflectionIntensity = 0.25f;
 
             // Fog: exponential, cold mist
             RenderSettings.fog        = true;
@@ -145,13 +153,9 @@ namespace NordicWilds.EditorTools
             // --- Layer 2: Distant mountain silhouettes (silhouette-readable skyboxers) ---
             CreateDistantMountains(worldRoot.transform, stoneMat, snowMat, darkStoneMat);
 
-            // --- Layer 3: Cliffs & natural boundaries ---
-            // North cliff mass
-            CreateBlock("North Cliff",  new Vector3(  0,  2.0f, 100f), new Vector3(420,  5f, 210), stoneMat,     worldRoot.transform);
-            // West & East sheer cliff faces (strata layering — two-tone)
-            CreateStratifiedCliff("West Cliff",  new Vector3(-205f, 10f,   0), new Vector3(8f, 28f, 420), stoneMat, darkStoneMat, worldRoot.transform, false);
-            CreateStratifiedCliff("East Cliff",  new Vector3( 205f, 10f,   0), new Vector3(8f, 28f, 420), stoneMat, darkStoneMat, worldRoot.transform, false);
-            CreateBlock("South Wall",   new Vector3(  0,  8f, -205f), new Vector3(420, 28f,  8), stoneMat,      worldRoot.transform);
+            // --- Layer 3: open natural boundary ---
+            // Removed the huge slab cliff walls; they looked like misplaced rectangles
+            // and blocked movement/visibility around the generated world.
 
             // Frozen waterfall — north-west cliff face (design landmark #1)
             CreateFrozenWaterfall(new Vector3(-65f, 0f, 68f), worldRoot.transform, iceMat, iceDeepMat, stoneMat);
@@ -172,7 +176,7 @@ namespace NordicWilds.EditorTools
 
             // ── Terrain Surface Detail ────────────────────────────────────────────
             // Scattered snow/mud patches for visual noise (Rule: vary scale & rotation)
-            for (int i = 0; i < 80; i++)
+            for (int i = 0; i < 34; i++)
             {
                 var patch = CreateBlock("Snow Patch",
                     new Vector3(Random.Range(-160f,160f), 0.02f, Random.Range(-160f,160f)),
@@ -259,6 +263,14 @@ namespace NordicWilds.EditorTools
             // Great Mead Hall (village centrepiece)
             CreateGreatHall(new Vector3(0f, 0f, 22f), worldRoot.transform, woodMat, woodDarkMat, thatchMat, stoneMat, pathMat, bannerRedMat);
 
+            // Tavern dialogue trigger inside the great hall — patrons share lore + hints.
+            GameObject tavernZone = new GameObject("Tavern Dialogue Zone");
+            tavernZone.transform.position = new Vector3(0f, 1.2f, 22f);
+            tavernZone.transform.SetParent(worldRoot.transform);
+            BoxCollider tavernCol = tavernZone.AddComponent<BoxCollider>();
+            tavernCol.size = new Vector3(28f, 4f, 10f);
+            tavernZone.AddComponent<NordicWilds.UI.TavernDialogue>();
+
             // Meadery — underground cellar entrance (hatch + steps going down)
             CreateMeadery(new Vector3(-30f, 0f, 18f), worldRoot.transform, stoneMat, woodMat, woodDarkMat, gildedMat);
 
@@ -312,7 +324,7 @@ namespace NordicWilds.EditorTools
 
             // ── Frostheim Foliage & Environmental Scatter ──────────────────────────
             // Pine forest — density gradient (thicker at edges, open near village)
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 92; i++)
             {
                 Vector3 pos = new Vector3(Random.Range(-195f, 195f), 0.5f, Random.Range(-195f, 195f));
                 float distFromCentre = new Vector2(pos.x, pos.z).magnitude;
@@ -324,7 +336,7 @@ namespace NordicWilds.EditorTools
             }
 
             // Moss-covered ruin stones (ancient, pre-village)
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 16; i++)
             {
                 Vector3 pos = new Vector3(Random.Range(-185f, 185f), 1f, Random.Range(-185f, 185f));
                 float h = Random.Range(1.5f, 10f);
@@ -336,7 +348,7 @@ namespace NordicWilds.EditorTools
             }
 
             // Fallen logs with snow caps
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Vector3 pos = new Vector3(Random.Range(-155f,155f), 0.5f, Random.Range(-155f,155f));
                 var l = CreateBlock("Fallen Log", pos,
@@ -348,7 +360,7 @@ namespace NordicWilds.EditorTools
             }
 
             // Large scattered boulders (glacial erratics)
-            for (int i = 0; i < 15; i++)
+            for (int i = 0; i < 8; i++)
             {
                 Vector3 pos = new Vector3(Random.Range(-185f,185f), Random.Range(0.5f,2f), Random.Range(-185f,185f));
                 var b = CreateBlock("Glacial Boulder", pos,
@@ -359,17 +371,6 @@ namespace NordicWilds.EditorTools
             }
 
             // ── Frostheim → Yamato Portal ──────────────────────────────────────────
-            CreatePortalGateway(
-                "Portal Gateway (To Yamato)",
-                new Vector3(6f, 0f, -16f),
-                worldRoot.transform,
-                runeStoneVein,
-                new Color(0.90f, 0.40f, 0.75f, 0.55f),
-                new Color(1.00f, 0.35f, 0.80f),
-                new Color(1.00f, 0.72f, 0.88f),
-                new Vector3(10000, 2f, 10000),
-                isReturn: false);
-
             // ── Frostheim Weather System ───────────────────────────────────────────
             CreateBlizzard(worldRoot.transform);
             CreateAuroraBorealis(worldRoot.transform);
@@ -393,26 +394,17 @@ namespace NordicWilds.EditorTools
             for (int i = 0; i < 2; i++)
                 CreateAnimal("Elk",       new Vector3(Random.Range(-80f,80f),0.8f, Random.Range(20f,80f)),  new Vector3(1.2f,2.2f,2.2f),  elkMat,      2.5f,worldRoot.transform);
 
-            // ── Frostheim Enemies ──────────────────────────────────────────────────
-            Material draugrMat    = MakeMat(null,0.08f); draugrMat.color   = new Color(0.78f,0.10f,0.10f);
-            Material berserkMat   = MakeMat(null,0.10f); berserkMat.color  = new Color(0.62f,0.04f,0.04f);
-            Material jarlMat      = MakeMat(null,0.35f); jarlMat.color     = new Color(0.82f,0.65f,0.22f); // gilded jarl
-            Material hitFlashMat  = MakeMat(null,0.00f); hitFlashMat.color = Color.white;
-
-            for (int i = 0; i < 18; i++)
-                CreateEnemy("Draugr Thrall",
-                    new Vector3(Random.Range(-44f,44f),1f,Random.Range(10f,70f)),
-                    draugrMat, hitFlashMat, worldRoot.transform);
-            for (int i = 0; i < 6; i++)
-                CreateEnemy("Berserker",
-                    new Vector3(Random.Range(-36f,36f),1f,Random.Range(22f,68f)),
-                    berserkMat, hitFlashMat, worldRoot.transform);
-            // Elite Jarl mini-boss
-            CreateEnemy("Jarl Champion",
-                new Vector3(4f, 1f, 62f), jarlMat, hitFlashMat, worldRoot.transform);
+            // ── Frostheim Village Structure (palisade + raid encounter) ────────────
+            CreateFrostheimVillagePerimeter(worldRoot.transform, woodMat, woodDarkMat, stoneMat, bannerRedMat, bannerBlackMat);
+            CreateFrostheimRaidEncounter(worldRoot.transform);
+            CreateLightSnowfall(worldRoot.transform);
 
             // ── YAMATO Realm ────────────────────────────────────────────────────────
             CreateYamatoRealm(worldRoot.transform);
+
+            Vector3 forestBoatStart = new Vector3(-630f, 1.05f, -675f);
+            Vector3 forestControlStart = new Vector3(-620f, 1.05f, -628f);
+            CreateCoastalForestLanding(worldRoot.transform, forestControlStart);
 
             // ── Player, Camera, Encounter ───────────────────────────────────────────
             GameObject player = SetupPlayer("Player");
@@ -425,10 +417,14 @@ namespace NordicWilds.EditorTools
             pSo.FindProperty("isometricCameraTransform").objectReferenceValue = cam.transform;
             pSo.ApplyModifiedProperties();
 
-            CreateMinimalUI();
-
             // Setup Ocean Main Menu Start
-            CreateOceanMenuUI(worldRoot.transform, player, cam);
+            CreateOceanMenuUI(worldRoot.transform, player, cam, forestBoatStart, forestControlStart);
+            CreateRegionMusicController(worldRoot.transform);
+
+            // Global mission tracker — pinned objective banner that persists across realms.
+            new GameObject("MissionTracker").AddComponent<NordicWilds.UI.MissionTracker>();
+            // Quick onboarding card (WASD / Shift / Space / LMB) — fades after intro.
+            new GameObject("ControlsTutorial").AddComponent<NordicWilds.UI.ControlsTutorial>();
 
             Debug.Log("═══ BUILD COMPLETE — FROSTHEIM ←→ YAMATO  ═══");
         }
@@ -485,55 +481,25 @@ namespace NordicWilds.EditorTools
             // Ground plane — warm grass
             CreateBlock("Yamato Ground",   O + new Vector3(0,-0.50f,0), new Vector3(240,1.0f,240), grassMat, worldRoot);
             CreateBlock("Yamato Subsoil",  O + new Vector3(0,-1.20f,0), new Vector3(240,1.0f,240), mossMat,  worldRoot);
+            CreateYamatoDistantBackdrop(O, worldRoot, stoneMat, whiteMat, bambooMat, mossMat);
 
-            // Shrine hill — gentle asymmetric rise
-            CreateBlock("Shrine Hill Base",  O + new Vector3( 0, 1.2f, 72f), new Vector3(58,2.5f,70), grassMat, worldRoot);
-            CreateBlock("Shrine Hill Crest", O + new Vector3( 0, 2.8f, 75f), new Vector3(38,2.0f,48), grassMat, worldRoot);
-
-            // Distant misty mountains (Layer 2) — six peaks, varied height
-            float[] mxArr = { -130f,-80f,-30f,30f,80f,130f };
-            float[] mhArr = {   22f, 35f, 28f,32f,26f, 30f };
-            for (int i = 0; i < 6; i++)
-            {
-                var mt = CreateBlock("Mountain "+i,
-                    O + new Vector3(mxArr[i], mhArr[i], 115f),
-                    new Vector3(38,mhArr[i]*2,32), stoneMat, worldRoot);
-                mt.transform.rotation = Quaternion.Euler(0,Random.Range(-10,10),0);
-                // Snow cap
-                CreateBlock("Mtn Snow "+i,
-                    O + new Vector3(mxArr[i], mhArr[i]*2+mhArr[i]*0.5f, 115f),
-                    new Vector3(20,mhArr[i]*0.6f,18), whiteMat, worldRoot);
-            }
-
-            // Realm borders
-            CreateBlock("Y West Cliff",  O+new Vector3(-115f, 6f,   0), new Vector3(10,24,240), stoneMat, worldRoot);
-            CreateBlock("Y East Cliff",  O+new Vector3( 115f, 6f,   0), new Vector3(10,24,240), stoneMat, worldRoot);
-            CreateBlock("Y South Wall",  O+new Vector3(    0, 6f,-115f), new Vector3(240,24,10),stoneMat, worldRoot);
-            CreateBlock("Y North Wall",  O+new Vector3(    0, 6f, 115f), new Vector3(240,24,10),stoneMat, worldRoot);
+            // Keep Yamato open and playable. The old cliff wall and raised hill blocks
+            // looked like giant stray rectangles and blocked the shrine buildings.
 
             // Invisible play bounds
             GameObject yBounds = new GameObject("Yamato Boundaries"); yBounds.transform.SetParent(worldRoot);
-            CreateInvisibleWall("YN", O+new Vector3(   0,5f, 88f),new Vector3(190,22,2), yBounds.transform);
-            CreateInvisibleWall("YS", O+new Vector3(   0,5f,-88f),new Vector3(190,22,2), yBounds.transform);
-            CreateInvisibleWall("YW", O+new Vector3(-98f,5f,   0),new Vector3(2,22,190), yBounds.transform);
-            CreateInvisibleWall("YE", O+new Vector3( 98f,5f,   0),new Vector3(2,22,190), yBounds.transform);
-
-            // Ground surface variety
-            for (int i = 0; i < 60; i++)
-            {
-                var patch = CreateBlock("Grass Patch",
-                    O+new Vector3(Random.Range(-100f,100f),0.02f,Random.Range(-100f,100f)),
-                    new Vector3(Random.Range(2f,8f),0.04f,Random.Range(2f,7f)), mossMat, worldRoot);
-                patch.transform.rotation = Quaternion.Euler(0,Random.Range(0,360),0);
-            }
+            CreateInvisibleWall("YN", O+new Vector3(   0,5f,118f),new Vector3(232,22,2), yBounds.transform);
+            CreateInvisibleWall("YS", O+new Vector3(   0,5f,-118f),new Vector3(232,22,2), yBounds.transform);
+            CreateInvisibleWall("YW", O+new Vector3(-118f,5f,   0),new Vector3(2,22,232), yBounds.transform);
+            CreateInvisibleWall("YE", O+new Vector3( 118f,5f,   0),new Vector3(2,22,232), yBounds.transform);
 
             // ── Dry Moat Castle Approach (south entry) ────────────────────────────
-            CreateDryMoatApproach(O, worldRoot, stoneMat, darkStone, woodMat, redMat, pathMat);
+            CreateYamatoArrivalDock(O, worldRoot, waterMat, woodMat, darkStone);
 
             // ── Torii Gate Procession (Fushimi Inari-style) ───────────────────────
             //  Rule of Thirds: procession occupies the central third of the Z axis
-            for (int i = 0; i < 10; i++)
-                CreateToriiGate("Torii "+i, O+new Vector3(0,0f,(i*9f)-14f), redMat, woodMat, worldRoot);
+            for (int i = 0; i < 6; i++)
+                CreateToriiGate("Torii "+i, O+new Vector3(0,0f,(i*13f)-8f), redMat, woodMat, worldRoot);
 
             // ── Stone-paved main path ──────────────────────────────────────────────
             for (int i = 0; i < 24; i++)
@@ -552,24 +518,17 @@ namespace NordicWilds.EditorTools
                 CreateStoneLantern(O+new Vector3( 5.2f,0,z), worldRoot, stoneMat);
             }
 
-            // ── Shrine Approach: Wide Stone Steps ─────────────────────────────────
+            // ── Shrine Approach: flat walkable stone path ─────────────────────────
             for (int i = 0; i < 12; i++)
-                CreateBlock("Shrine Step "+i,
-                    O+new Vector3(0,(i*0.30f)+0.6f,56f+(i*0.55f)),
-                    new Vector3(12f,0.30f,0.60f), stoneMat, worldRoot);
+                CreateBlock("Shrine Path Stone "+i,
+                    O+new Vector3(0,0.08f,52f+(i*3.4f)),
+                    new Vector3(11f,0.12f,2.4f), stoneMat, worldRoot);
 
             // ── Shrine Complex on the Hill ─────────────────────────────────────────
-            CreateMainShrine(    O+new Vector3(  0f,5f,76f), worldRoot, redMat,darkRedMat,woodMat,goldMat,stoneMat,pathMat);
-            CreatePagoda(        O+new Vector3( 26f,5f,76f), worldRoot, redMat,darkRedMat,woodMat,tileGrayM);
-            CreateBellTower(     O+new Vector3(-26f,5f,76f), worldRoot, woodMat,goldMat,stoneMat);
-            CreateNohTheatre(    O+new Vector3( -8f,5f,92f), worldRoot, woodMat,woodLightMat,stoneMat,redMat);
-            CreateButsudanAltar( O+new Vector3(  8f,5f,92f), worldRoot, woodMat,goldMat,redMat,paperMat);
-
-            // ── Armoury (midnight black, north-east of shrine hill) ────────────────
-            CreateArmoury(O+new Vector3(44f,5f,78f), worldRoot, charcoalMat,darkStone,metalMat,redMat);
-
-            // ── Kyudojo — Ceremonial Archery Range ────────────────────────────────
-            CreateKyudojo(O+new Vector3(52f,0f,20f), worldRoot, woodMat,stoneMat,pathMat,indigoMat);
+            CreateMainShrine(    O+new Vector3(  0f,0f,76f), worldRoot, redMat,darkRedMat,woodMat,goldMat,stoneMat,pathMat);
+            CreatePagoda(        O+new Vector3( 26f,0f,76f), worldRoot, redMat,darkRedMat,woodMat,tileGrayM);
+            CreateBellTower(     O+new Vector3(-26f,0f,76f), worldRoot, woodMat,goldMat,stoneMat);
+            CreateTeaHouse(O+new Vector3(-28f,0,34f), worldRoot, woodMat,paperMat,redMat,stoneMat);
 
             // ── Koi Pond with waterfall cascade ───────────────────────────────────
             CreateKoiPond(O+new Vector3(-30f,0,18f), worldRoot, stoneMat,waterMat,goldMat);
@@ -579,62 +538,65 @@ namespace NordicWilds.EditorTools
             CreateZenGarden(O+new Vector3(30f,0,15f), worldRoot, stoneMat,sandMat);
 
             // ── Gorintō Stupa Field (stone memorial towers, layer of dread) ────────
-            CreateGorintoStupaField(O+new Vector3(-55f,0,55f), worldRoot, stoneMat, darkStone, mossMat);
 
             // ── Ornamental Bridge over the stream ─────────────────────────────────
-            CreateOrnamentalBridge(O+new Vector3(-10f,0,-20f), worldRoot, redMat,woodMat,stoneMat,waterMat);
 
             // ── Watermill on the stream ────────────────────────────────────────────
-            CreateWatermill(O+new Vector3(-30f,0,-25f), worldRoot, woodMat,stoneMat,waterMat);
 
             // ── Wisteria Arcade (visual corridor, Layer 3 depth cue) ──────────────
-            CreateWisteriaArcade(O+new Vector3(20f,0,40f), worldRoot, woodMat,wisteriaM,stoneMat);
 
             // ── Lantern Festival Pennants across the path ──────────────────────────
-            CreateFestivalPennants(O, worldRoot, redMat,goldMat,woodMat,paperMat);
 
             // ── Tea House ─────────────────────────────────────────────────────────
-            CreateTeaHouse(O+new Vector3(-22f,0,32f), worldRoot, woodMat,paperMat,redMat,stoneMat);
 
             // ── Bamboo Groves ─────────────────────────────────────────────────────
-            for (int i = 0; i < 20; i++)
+            //  Keep bamboo to the side strips ONLY, well clear of the dock corridor and
+            //  the new dojo position. (Previously bamboo crowded the dojo and overlapped
+            //  the south landing area.)
+            for (int i = 0; i < 9; i++)
             {
-                Vector3 bp = O+new Vector3(Random.Range(22f,92f),0,Random.Range(-80f,80f));
-                if (Mathf.Abs(bp.z-O.z) > 4f) CreateBambooClump(bp, worldRoot, bambooMat);
-            }
-            for (int i = 0; i < 20; i++)
-            {
-                Vector3 bp = O+new Vector3(Random.Range(-92f,-22f),0,Random.Range(-80f,80f));
-                if (Mathf.Abs(bp.z-O.z) > 4f) CreateBambooClump(bp, worldRoot, bambooMat);
+                float z = -36f + i * 14f;
+                // Skip clumps that would crowd the dock approach (south) or the dojo (NE)
+                if (z < -30f) continue;
+                CreateBambooClump(O+new Vector3(-92f,0,z), worldRoot, bambooMat);
+                if (z < 38f || z > 60f)
+                    CreateBambooClump(O+new Vector3( 92f,0,z), worldRoot, bambooMat);
             }
 
             // ── Sakura Trees ──────────────────────────────────────────────────────
-            for (int i = 0; i < 50; i++)
+            Vector3[] sakuraSpots =
             {
-                Vector3 tp = O+new Vector3(Random.Range(-108f,108f),0.5f,Random.Range(-108f,108f));
-                if (Mathf.Abs(tp.x-O.x) > 5f) CreateSakuraTree(tp, worldRoot, sakuraMat, woodMat);
-            }
+                new Vector3(-42f,0.5f,10f), new Vector3(42f,0.5f,10f),
+                new Vector3(-38f,0.5f,54f), new Vector3(38f,0.5f,54f),
+                new Vector3(-14f,0.5f,98f), new Vector3(14f,0.5f,98f),
+                new Vector3(-62f,0.5f,-6f), new Vector3(62f,0.5f,-6f)
+            };
+            foreach (Vector3 spot in sakuraSpots)
+                CreateSakuraTree(O + spot, worldRoot, sakuraMat, woodMat);
 
             // ── Bamboo Perimeter Fence ─────────────────────────────────────────────
-            for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f+i*5f,0,-65f), worldRoot,bambooMat,woodMat,false);
+
+            for (int i=0;i<26;i++)
+            {
+                float x = -65f + i * 5f;
+                if (Mathf.Abs(x) < 9f)
+                    continue;
+                CreateBambooFenceSection(O+new Vector3(x,0,-65f), worldRoot,bambooMat,woodMat,false);
+            }
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f+i*5f,0, 65f), worldRoot,bambooMat,woodMat,false);
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3(-65f,0,-65f+i*5f), worldRoot,bambooMat,woodMat,true);
             for (int i=0;i<26;i++) CreateBambooFenceSection(O+new Vector3( 65f,0,-65f+i*5f), worldRoot,bambooMat,woodMat,true);
-
-            // Ninja rooftop path cables (rope-climb shortcuts above key buildings)
-            CreateNinjaRooftopPaths(O, worldRoot, charcoalMat, woodMat);
-
-            // ── Cherry Blossom & Morning Mist Weather ─────────────────────────────
-            CreateCherryBlossomWeather(O, worldRoot);
-            CreateMorningMist(O, worldRoot);
+            // Particle weather is intentionally off until we have proper petal/mist
+            // sprites. The old square billboards read as random floating rectangles.
 
             // ── Yamato Wildlife ───────────────────────────────────────────────────
             Material deerMat   = MakeMat(null,0.12f); deerMat.color  = new Color(0.64f,0.46f,0.28f);
             Material craneMat  = MakeMat(null,0.12f); craneMat.color = Color.white;
             Material foxMatJ   = MakeMat(null,0.10f); foxMatJ.color  = new Color(0.90f,0.55f,0.20f); // red fox
-            for (int i=0;i<4;i++) CreateAnimal("Deer",  O+new Vector3(Random.Range(-65f,65f),0.5f,Random.Range(-65f,65f)),new Vector3(0.7f,1.4f,1.6f),deerMat, 3.0f,worldRoot);
-            for (int i=0;i<3;i++) CreateAnimal("Crane", O+new Vector3(Random.Range(-55f,55f),0.4f,Random.Range(-55f,55f)),new Vector3(0.6f,1.0f,0.4f),craneMat,2.5f,worldRoot);
-            for (int i=0;i<2; i++) CreateAnimal("Red Fox",O+new Vector3(Random.Range(-50f,50f),0.4f,Random.Range(-50f,50f)),new Vector3(0.8f,1.0f,1.5f),foxMatJ, 4.0f,worldRoot);
+            CreateAnimal("Deer",  O+new Vector3(-52f,0.5f,42f),new Vector3(0.7f,1.4f,1.6f),deerMat, 2.2f,worldRoot);
+            CreateAnimal("Crane", O+new Vector3(-28f,0.4f,18f),new Vector3(0.6f,1.0f,0.4f),craneMat,1.6f,worldRoot);
+            CreateAnimal("Crane", O+new Vector3(-34f,0.4f,21f),new Vector3(0.6f,1.0f,0.4f),craneMat,1.6f,worldRoot);
+            CreateAnimal("Red Fox",O+new Vector3(46f,0.4f,12f),new Vector3(0.8f,1.0f,1.5f),foxMatJ, 2.4f,worldRoot);
 
             // ── Yamato Enemies ─────────────────────────────────────────────────────
             Material samuraiMat = MakeMat(null,0.28f); samuraiMat.color = new Color(0.12f,0.18f,0.32f);
@@ -643,23 +605,843 @@ namespace NordicWilds.EditorTools
             Material oniMat     = MakeMat(null,0.08f); oniMat.color     = new Color(0.70f,0.08f,0.12f); // Oni demon
             Material yHitFlash  = MakeMat(null,0.00f); yHitFlash.color  = Color.white;
 
-            for (int i=0;i<14;i++) CreateEnemy("Samurai", O+new Vector3(Random.Range(-48f,48f),1f,Random.Range(5f,68f)), samuraiMat,yHitFlash,worldRoot);
-            for (int i=0;i<10;i++) CreateEnemy("Ninja",   O+new Vector3(Random.Range(-42f,42f),1f,Random.Range(5f,62f)), ninjaMat,  yHitFlash,worldRoot);
-            for (int i=0;i< 6;i++) CreateEnemy("Ronin",   O+new Vector3(Random.Range(-55f,55f),1f,Random.Range(-20f,40f)),ronin,    yHitFlash,worldRoot);
-            // Oni mini-boss at the shrine gate
-            CreateEnemy("Oni Guardian", O+new Vector3(0f,1f,55f), oniMat, yHitFlash, worldRoot);
+            Vector3[] npcSpots =
+            {
+                new Vector3(-12f,0.6f,20f), new Vector3(12f,0.6f,20f),
+                new Vector3(-18f,0.6f,58f), new Vector3(18f,0.6f,58f),
+                new Vector3(-34f,0.6f,30f), new Vector3(34f,0.6f,30f)
+            };
+            for (int i=0;i<npcSpots.Length;i++)
+                CreateNeutralNpc(i < 4 ? "Samurai NPC" : "Ronin NPC", O+npcSpots[i], i < 4 ? samuraiMat : ronin, worldRoot);
+            CreateBambooDojoEntranceAndInterior(O, worldRoot, woodMat, woodLightMat, paperMat, redMat, darkRedMat, stoneMat, bambooMat, oniMat, yHitFlash);
 
             // ── Return Portal → Frostheim ──────────────────────────────────────────
+            //  Pushed far past the shrine complex so the player has to journey through
+            //  Yamato to reach it. Surrounded by warding stones and given a heavier glow.
+            Vector3 portalPos = O + new Vector3(0f, 0f, 108f);
             CreatePortalGateway(
                 "Return Portal (To Frostheim)",
-                O+new Vector3(12f,0f,6f),
+                portalPos,
                 worldRoot,
                 darkRedMat,
-                new Color(0.45f,0.78f,1.00f,0.58f),
-                new Color(0.38f,0.80f,1.00f),
-                new Color(0.78f,0.90f,1.00f),
-                new Vector3(0,2f,-18f),
+                new Color(0.32f, 0.62f, 1.00f, 0.85f),
+                new Color(0.28f, 0.72f, 1.00f),
+                new Color(0.78f, 0.92f, 1.00f),
+                new Vector3(0f, 2f, -18f),
                 isReturn: true);
+
+            // Warding stone circle around the portal — makes it feel like a place of power
+            Material wardStone = MakeMat(null, 0.32f); wardStone.color = new Color(0.18f, 0.20f, 0.26f);
+            for (int i = 0; i < 10; i++)
+            {
+                float ang = i * 36f;
+                Vector3 off = Quaternion.Euler(0f, ang, 0f) * new Vector3(8.5f, 0f, 0f);
+                GameObject ward = CreateBlock("Portal Ward Stone " + i,
+                    portalPos + off + new Vector3(0f, 1.4f, 0f),
+                    new Vector3(1.0f, Mathf.Lerp(2.6f, 4.4f, (i % 3) / 2f), 0.9f),
+                    wardStone, worldRoot);
+                ward.transform.rotation = Quaternion.Euler(Random.Range(-4f, 4f), ang, Random.Range(-4f, 4f));
+            }
+            // Raised stone platform under the portal
+            CreateBlock("Portal Platform", portalPos + new Vector3(0f, -0.20f, 0f), new Vector3(14f, 0.4f, 14f), wardStone, worldRoot);
+            CreateBlock("Portal Inner Disc", portalPos + new Vector3(0f, 0.05f, 0f), new Vector3(9f, 0.12f, 9f), darkRedMat, worldRoot);
+
+            // Two extra strong point lights — the portal should be visible from far away
+            // and feel intimidating to approach.
+            AddPointLight(worldRoot, portalPos + new Vector3(0f, 4f, 0f), new Color(0.30f, 0.70f, 1.0f), 9f, 60f, "Portal Far Glow");
+            AddPointLight(worldRoot, portalPos + new Vector3(0f, 1f, -3f), new Color(0.50f, 0.90f, 1.0f), 6f, 30f, "Portal Approach Glow");
+
+            // A second dramatic torii framing the portal approach
+            CreateToriiGate("Portal Outer Torii", portalPos + new Vector3(0f, 0f, -22f), darkRedMat, woodMat, worldRoot);
+            CreateToriiGate("Portal Inner Torii", portalPos + new Vector3(0f, 0f, -10f), darkRedMat, woodMat, worldRoot);
+        }
+
+        private static void CreateCoastalForestLanding(Transform parent, Vector3 startPos)
+        {
+            Vector3 O = new Vector3(-620f, 0f, -610f);
+            GameObject root = new GameObject("Coastal Forest Landing");
+            root.transform.SetParent(parent);
+
+            Material grass = MakeMat(null, 0.08f); grass.color = new Color(0.18f, 0.36f, 0.22f);
+            Material moss = MakeMat(null, 0.08f); moss.color = new Color(0.12f, 0.28f, 0.16f);
+            Material sand = MakeMat(null, 0.04f); sand.color = new Color(0.54f, 0.48f, 0.34f);
+            Material water = MakeMat(null, 0.88f); water.color = new Color(0.08f, 0.28f, 0.36f, 0.82f);
+            Material wood = MakeMat(null, 0.20f); wood.color = new Color(0.24f, 0.13f, 0.06f);
+            Material darkWood = MakeMat(null, 0.12f); darkWood.color = new Color(0.11f, 0.07f, 0.04f);
+            Material pine = MakeMat(null, 0.05f); pine.color = new Color(0.08f, 0.24f, 0.15f);
+            Material autumn = MakeMat(null, 0.06f); autumn.color = new Color(0.72f, 0.34f, 0.12f);
+            Material oak = MakeMat(null, 0.06f); oak.color = new Color(0.18f, 0.34f, 0.14f);
+            Material birch = MakeMat(null, 0.06f); birch.color = new Color(0.56f, 0.69f, 0.42f);
+            Material birchBark = MakeMat(null, 0.10f); birchBark.color = new Color(0.78f, 0.76f, 0.66f);
+            Material stone = MakeMat(null, 0.26f); stone.color = new Color(0.34f, 0.38f, 0.38f);
+            Material snow = MakeMat(null, 0.06f); snow.color = new Color(0.78f, 0.88f, 0.92f);
+            Material foeMat = MakeMat(null, 0.10f); foeMat.color = new Color(0.22f, 0.25f, 0.30f);
+            Material forestBossMat = MakeMat(null, 0.32f); forestBossMat.color = new Color(0.62f, 0.18f, 0.08f);
+            Material hitFlash = MakeMat(null, 0.00f); hitFlash.color = Color.white;
+            Material trailMat = MakeMat(null, 0.06f); trailMat.color = new Color(0.46f, 0.37f, 0.24f);
+            Material flowerMat = MakeMat(null, 0.04f); flowerMat.color = new Color(0.64f, 0.72f, 0.50f);
+            Material emberMat = MakeMat(null, 0.22f); emberMat.color = new Color(1.0f, 0.38f, 0.08f);
+
+            CreateBlock("Forest Landing Ground", O + new Vector3(0f, -0.5f, 0f), new Vector3(178f, 1f, 154f), grass, root.transform);
+            CreateBlock("Forest Landing Moss", O + new Vector3(0f, -1.15f, 0f), new Vector3(178f, 1f, 154f), moss, root.transform);
+            CreateBlock("Landing Beach", O + new Vector3(0f, -0.44f, -47f), new Vector3(132f, 0.16f, 22f), sand, root.transform);
+            CreateSceneryBlock("Cold Coastal Water", O + new Vector3(0f, -0.55f, -78f), new Vector3(170f, 0.18f, 58f), water, root.transform);
+            CreateForestSafetyRim(O, root.transform, stone, moss, pine, darkWood);
+
+            CreateDock(O + new Vector3(0f, 0f, -46f), root.transform, wood, darkWood);
+            GameObject landedBoat = CreateLandedLongship(O + new Vector3(-10f, 0.35f, -68f), root.transform);
+            CreateForestBackdrop(O, root.transform, stone, snow, pine, moss);
+
+            CreateBlock("Main Forest Trail South", O + new Vector3(0f, 0.04f, -25f), new Vector3(8.2f, 0.08f, 46f), trailMat, root.transform);
+            CreateBlock("Main Forest Trail North", O + new Vector3(0f, 0.045f, 22f), new Vector3(7.2f, 0.08f, 54f), trailMat, root.transform);
+            CreateBlock("Trail Bend West", O + new Vector3(-19f, 0.05f, 18f), new Vector3(34f, 0.08f, 6f), trailMat, root.transform);
+            CreateBlock("Trail Bend East", O + new Vector3(18f, 0.05f, 32f), new Vector3(30f, 0.08f, 6f), trailMat, root.transform);
+            CreateBlock("Dock Trail Boards", O + new Vector3(0f, 0.08f, -45f), new Vector3(7f, 0.12f, 11f), wood, root.transform);
+
+            Vector3[] treePositions =
+            {
+                new Vector3(-54f,0f,-22f), new Vector3(-49f,0f,-6f), new Vector3(-52f,0f,14f), new Vector3(-44f,0f,32f),
+                new Vector3(54f,0f,-18f), new Vector3(48f,0f,2f), new Vector3(52f,0f,22f), new Vector3(42f,0f,39f),
+                new Vector3(-30f,0f,48f), new Vector3(-16f,0f,54f), new Vector3(18f,0f,54f), new Vector3(34f,0f,48f)
+            };
+            foreach (Vector3 p in treePositions)
+                CreatePineTree(O + p, root.transform, pine, darkWood, wood);
+
+            CreateForestTreeDiversity(O, root.transform, pine, oak, autumn, birch, darkWood, wood, birchBark);
+            CreateForestClutter(O, root.transform, pine, darkWood, wood, stone, moss, flowerMat);
+            CreateAbandonedForestSettlement(O, root.transform, wood, darkWood, stone, moss, trailMat, emberMat);
+
+            GameObject leaf = CreateLeafCompanion(O + new Vector3(3.5f, 1.0f, -16f), root.transform);
+
+            ForestArtifact[] artifacts = new ForestArtifact[3];
+            artifacts[0] = CreateForestArtifact("Artifact of Roots", O + new Vector3(-36f, 0.85f, 14f), root.transform);
+            artifacts[1] = CreateForestArtifact("Artifact of Tides", O + new Vector3(35f, 0.85f, 29f), root.transform);
+            artifacts[2] = CreateForestArtifact("Artifact of Dawn", O + new Vector3(-8f, 0.85f, 48f), root.transform);
+            foreach (ForestArtifact artifact in artifacts)
+            {
+                if (artifact != null)
+                    artifact.gameObject.SetActive(false);
+            }
+            CreateArtifactNest(O + new Vector3(-36f, 0f, 14f), root.transform, stone, moss, darkWood, flowerMat);
+            CreateArtifactNest(O + new Vector3(35f, 0f, 29f), root.transform, stone, moss, darkWood, flowerMat);
+            CreateArtifactNest(O + new Vector3(-8f, 0f, 48f), root.transform, stone, moss, darkWood, flowerMat);
+
+            GameObject trailFocus = new GameObject("Trail Camera Focus");
+            trailFocus.transform.SetParent(root.transform);
+            trailFocus.transform.position = O + new Vector3(0f, 1f, -34f);
+
+            CreateForestFinalBossClearing(O + new Vector3(0f, 0f, 58f), root.transform, stone, moss, darkWood, emberMat);
+
+            Health[] foes = new Health[5];
+            Vector3[] foePositions =
+            {
+                new Vector3(-16f,1f,-12f), new Vector3(16f,1f,-8f), new Vector3(-20f,1f,16f),
+                new Vector3(20f,1f,18f), new Vector3(0f,1f,30f)
+            };
+
+            for (int i = 0; i < foes.Length; i++)
+            {
+                GameObject foe = CreateEnemy("Forest Foe " + (i + 1), O + foePositions[i], foeMat, hitFlash, root.transform);
+                foes[i] = foe.GetComponent<Health>();
+                foe.SetActive(false);
+            }
+
+            GameObject finalBoss = CreateEnemy("The Ashen Jarl", O + new Vector3(0f, 1f, 56f), forestBossMat, hitFlash, root.transform);
+            finalBoss.transform.localScale = new Vector3(2.05f, 2.05f, 2.05f);
+            Health finalBossHealth = finalBoss.GetComponent<Health>();
+            if (finalBossHealth != null)
+            {
+                SerializedObject healthSo = new SerializedObject(finalBossHealth);
+                healthSo.FindProperty("maxHealth").floatValue = 440f;
+                healthSo.ApplyModifiedProperties();
+            }
+            finalBoss.SetActive(false);
+
+            GameObject boatTrigger = new GameObject("Boat Boarding Interaction");
+            boatTrigger.transform.SetParent(root.transform);
+            boatTrigger.transform.position = O + new Vector3(-10f, 1.15f, -65f);
+            BoxCollider boatCollider = boatTrigger.AddComponent<BoxCollider>();
+            boatCollider.size = new Vector3(10f, 4f, 10f);
+            ForestBoatInteraction boatInteraction = boatTrigger.AddComponent<ForestBoatInteraction>();
+            if (landedBoat != null)
+                boatInteraction.boatRoot = landedBoat.transform;
+
+            if (landedBoat != null)
+            {
+                boatTrigger.transform.SetParent(landedBoat.transform, worldPositionStays: true);
+                boatTrigger.transform.localRotation = Quaternion.identity;
+            }
+
+            var quest = root.AddComponent<ForestQuestController>();
+            quest.leaf = leaf.transform;
+            quest.artifacts = artifacts;
+            quest.protectors = foes;
+            quest.finalBoss = finalBossHealth;
+            quest.trailFocus = trailFocus.transform;
+            quest.boatInteraction = boatInteraction;
+            quest.yamatoDestination = new Vector3(10000f, 1.05f, 9980f);
+            quest.yamatoBoatLandingPoint = new Vector3(10000f, 1.05f, 9958f);
+            quest.yamatoBoatApproachPoint = new Vector3(10000f, 0.35f, 9936f);
+            quest.yamatoDockedBoatPoint = new Vector3(10000f, 0.35f, 9958f);
+            quest.boatSeaDirection = new Vector3(0f, 0f, -1f);
+            quest.landingActivationPoint = startPos;
+
+            AddPointLight(root.transform, O + new Vector3(0f, 3f, -42f), new Color(0.45f, 0.66f, 0.82f), 2.4f, 18f, "Coastal Moon Wash");
+        }
+
+        private static void CreateDock(Vector3 pos, Transform parent, Material wood, Material darkWood)
+        {
+            GameObject dock = new GameObject("Landing Dock");
+            dock.transform.SetParent(parent);
+            for (int i = 0; i < 8; i++)
+                CreateBlock("Dock Plank " + i, pos + new Vector3(0f, 0.25f, -i * 3.2f), new Vector3(8.5f, 0.28f, 2.4f), wood, dock.transform);
+
+            for (int i = 0; i < 5; i++)
+            {
+                float z = -i * 5.8f;
+                CreateBlock("Dock Post L " + i, pos + new Vector3(-4.8f, -0.6f, z), new Vector3(0.45f, 2.4f, 0.45f), darkWood, dock.transform);
+                CreateBlock("Dock Post R " + i, pos + new Vector3(4.8f, -0.6f, z), new Vector3(0.45f, 2.4f, 0.45f), darkWood, dock.transform);
+            }
+        }
+
+        private static GameObject CreateLandedLongship(Vector3 pos, Transform parent)
+        {
+            GameObject boat = new GameObject("Landed Menu Longship");
+            boat.transform.SetParent(parent);
+            boat.transform.position = pos;
+            boat.transform.rotation = Quaternion.Euler(0f, 18f, 0f);
+
+            if (CreateCinematicShip(boat.transform) == null)
+                CreateFallbackLongship(boat.transform);
+
+            return boat;
+        }
+
+        private static GameObject CreateLeafCompanion(Vector3 pos, Transform parent)
+        {
+            GameObject leaf = new GameObject("Leaf");
+            leaf.transform.SetParent(parent);
+            leaf.transform.position = pos;
+
+            Material body = MakeMat(null, 0.18f); body.color = new Color(0.18f, 0.46f, 0.20f);
+            Material cloak = MakeMat(null, 0.10f); cloak.color = new Color(0.10f, 0.28f, 0.13f);
+            Material skin = MakeMat(null, 0.12f); skin.color = new Color(0.70f, 0.55f, 0.36f);
+            Material glow = MakeMat(null, 0.45f); glow.color = new Color(0.68f, 1.00f, 0.46f);
+
+            CreateBlock("Leaf Body", pos + new Vector3(0f, 0.8f, 0f), new Vector3(0.82f, 1.35f, 0.62f), body, leaf.transform, false);
+            GameObject head = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            head.name = "Leaf Head";
+            head.transform.SetParent(leaf.transform);
+            head.transform.position = pos + new Vector3(0f, 1.72f, 0f);
+            head.transform.localScale = new Vector3(0.55f, 0.55f, 0.55f);
+            head.GetComponent<Renderer>().sharedMaterial = skin;
+            DestroyImmediate(head.GetComponent<Collider>());
+
+            CreateBlock("Leaf Cloak", pos + new Vector3(0f, 0.85f, 0.18f), new Vector3(1.0f, 1.15f, 0.18f), cloak, leaf.transform, false);
+            GameObject sprout = CreateBlock("Leaf Sprout", pos + new Vector3(0f, 2.12f, 0f), new Vector3(0.9f, 0.12f, 0.36f), glow, leaf.transform, false);
+            sprout.transform.rotation = Quaternion.Euler(0f, 20f, -18f);
+            AddPointLight(leaf.transform, new Vector3(0f, 2.0f, 0f), new Color(0.45f, 1f, 0.45f), 0.9f, 4f, "Leaf Gentle Glow");
+            return leaf;
+        }
+
+        private static ForestArtifact CreateForestArtifact(string name, Vector3 pos, Transform parent)
+        {
+            Material baseMat = MakeMat(null, 0.42f);
+            baseMat.color = new Color(0.42f, 0.85f, 0.72f);
+            Material coreMat = MakeMat(null, 0.55f);
+            coreMat.color = new Color(0.95f, 0.86f, 0.45f);
+
+            GameObject artifact = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            artifact.name = name;
+            artifact.transform.SetParent(parent);
+            artifact.transform.position = pos;
+            artifact.transform.localScale = new Vector3(0.72f, 0.72f, 0.72f);
+            artifact.GetComponent<Renderer>().sharedMaterial = baseMat;
+
+            ForestArtifact script = artifact.AddComponent<ForestArtifact>();
+            script.ArtifactName = name;
+
+            SphereCollider trigger = artifact.GetComponent<SphereCollider>();
+            if (trigger != null)
+            {
+                trigger.isTrigger = true;
+                trigger.radius = 2.8f;
+            }
+
+            GameObject shard = CreateSceneryBlock("Artifact Inner Shard", pos + new Vector3(0f, 0.05f, 0f), new Vector3(0.24f, 0.88f, 0.24f), coreMat, artifact.transform);
+            shard.transform.rotation = Quaternion.Euler(18f, 32f, 8f);
+            AddPointLight(artifact.transform, Vector3.zero, new Color(0.72f, 1f, 0.72f), 0.7f, 5.2f, name + " Glow");
+            return script;
+        }
+
+        private static void CreateForestTreeDiversity(Vector3 O, Transform parent, Material pine, Material oak, Material autumn, Material birch, Material darkWood, Material wood, Material birchBark)
+        {
+            Vector3[] heroTrees =
+            {
+                new Vector3(-62f,0f,42f), new Vector3(58f,0f,44f), new Vector3(-66f,0f,-4f), new Vector3(64f,0f,4f),
+                new Vector3(-40f,0f,-30f), new Vector3(42f,0f,-30f), new Vector3(-24f,0f,62f), new Vector3(27f,0f,60f)
+            };
+
+            for (int i = 0; i < heroTrees.Length; i++)
+            {
+                if (i % 4 == 0)
+                    CreateOakTree(O + heroTrees[i], parent, oak, darkWood);
+                else if (i % 4 == 1)
+                    CreateAutumnTree(O + heroTrees[i], parent, autumn, darkWood);
+                else if (i % 4 == 2)
+                    CreateBirchTree(O + heroTrees[i], parent, birch, birchBark);
+                else
+                    CreatePineTree(O + heroTrees[i], parent, pine, darkWood, wood);
+            }
+
+            for (int i = 0; i < 70; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-76f, 76f), 0f, Random.Range(-48f, 68f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                int type = i % 5;
+                if (type == 0)
+                    CreateAutumnTree(O + local, parent, autumn, darkWood);
+                else if (type == 1)
+                    CreateOakTree(O + local, parent, oak, darkWood);
+                else if (type == 2)
+                    CreateBirchTree(O + local, parent, birch, birchBark);
+                else
+                    CreatePineTree(O + local, parent, pine, darkWood, wood);
+            }
+        }
+
+        private static void CreateAutumnTree(Vector3 pos, Transform parent, Material foliage, Material wood)
+        {
+            GameObject tree = new GameObject("Autumn Tree");
+            tree.transform.position = pos;
+            tree.transform.SetParent(parent);
+
+            CreateBlock("Autumn Trunk", pos + new Vector3(0f, 1.35f, 0f), new Vector3(0.7f, 2.7f, 0.7f), wood, tree.transform);
+            CreateSceneryBlock("Autumn Crown A", pos + new Vector3(0f, 3.3f, 0f), new Vector3(3.6f, 2.2f, 3.6f), foliage, tree.transform);
+            CreateSceneryBlock("Autumn Crown B", pos + new Vector3(-0.9f, 2.85f, 0.4f), new Vector3(2.5f, 1.7f, 2.5f), foliage, tree.transform);
+            CreateSceneryBlock("Autumn Crown C", pos + new Vector3(0.9f, 2.95f, -0.35f), new Vector3(2.4f, 1.6f, 2.4f), foliage, tree.transform);
+        }
+
+        private static void CreateOakTree(Vector3 pos, Transform parent, Material foliage, Material wood)
+        {
+            GameObject tree = new GameObject("Old Oak");
+            tree.transform.position = pos;
+            tree.transform.SetParent(parent);
+
+            CreateBlock("Oak Trunk", pos + new Vector3(0f, 1.15f, 0f), new Vector3(1.0f, 2.3f, 1.0f), wood, tree.transform);
+            CreateBlock("Oak Low Branch", pos + new Vector3(1.15f, 2.35f, 0.15f), new Vector3(2.8f, 0.32f, 0.32f), wood, tree.transform).transform.rotation = Quaternion.Euler(0f, 20f, 8f);
+            CreateBlock("Oak Bent Branch", pos + new Vector3(-1.05f, 2.55f, -0.25f), new Vector3(2.5f, 0.28f, 0.28f), wood, tree.transform).transform.rotation = Quaternion.Euler(0f, -24f, -10f);
+            CreateSceneryBlock("Oak Crown Main", pos + new Vector3(0f, 3.45f, 0f), new Vector3(4.2f, 2.4f, 4.2f), foliage, tree.transform);
+            CreateSceneryBlock("Oak Crown Side", pos + new Vector3(1.55f, 3.0f, 0.2f), new Vector3(2.8f, 1.7f, 2.8f), foliage, tree.transform);
+        }
+
+        private static void CreateBirchTree(Vector3 pos, Transform parent, Material foliage, Material bark)
+        {
+            GameObject tree = new GameObject("Birch Tree");
+            tree.transform.position = pos;
+            tree.transform.SetParent(parent);
+
+            CreateBlock("Birch Pale Trunk", pos + new Vector3(0f, 1.45f, 0f), new Vector3(0.48f, 2.9f, 0.48f), bark, tree.transform);
+            CreateBlock("Birch Dark Scar A", pos + new Vector3(0f, 1.15f, -0.25f), new Vector3(0.52f, 0.08f, 0.04f), bark, tree.transform);
+            CreateBlock("Birch Dark Scar B", pos + new Vector3(0f, 1.95f, -0.25f), new Vector3(0.52f, 0.08f, 0.04f), bark, tree.transform);
+            CreateSceneryBlock("Birch Leaf Top", pos + new Vector3(0f, 3.55f, 0f), new Vector3(2.6f, 2.1f, 2.6f), foliage, tree.transform);
+            CreateSceneryBlock("Birch Leaf Low", pos + new Vector3(0.55f, 2.85f, 0.15f), new Vector3(2.0f, 1.5f, 2.0f), foliage, tree.transform);
+        }
+
+        private static void CreateAbandonedForestSettlement(Vector3 O, Transform parent, Material wood, Material darkWood, Material stone, Material moss, Material trail, Material ember)
+        {
+            GameObject settlement = new GameObject("Abandoned Forest Settlement");
+            settlement.transform.SetParent(parent);
+
+            CreateAbandonedHut(O + new Vector3(-50f, 0f, -30f), settlement.transform, wood, darkWood, stone, -18f);
+            CreateAbandonedHut(O + new Vector3(49f, 0f, -24f), settlement.transform, wood, darkWood, stone, 22f);
+            CreateAbandonedHut(O + new Vector3(-59f, 0f, 26f), settlement.transform, wood, darkWood, stone, 12f);
+            CreateAbandonedHut(O + new Vector3(58f, 0f, 31f), settlement.transform, wood, darkWood, stone, -28f);
+
+            CreateCampfire(O + new Vector3(-25f, 0f, -23f), settlement.transform, stone, darkWood, ember, true);
+            CreateCampfire(O + new Vector3(28f, 0f, 10f), settlement.transform, stone, darkWood, ember, false);
+            CreateBench(O + new Vector3(-31f, 0f, -18f), settlement.transform, wood, darkWood, 28f);
+            CreateBench(O + new Vector3(24f, 0f, 15f), settlement.transform, wood, darkWood, -12f);
+            CreateBench(O + new Vector3(41f, 0f, -13f), settlement.transform, wood, darkWood, 78f);
+
+            for (int i = 0; i < 18; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-60f, 60f), 0.08f, Random.Range(-38f, 44f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                GameObject plank = CreateBlock("Abandoned Plank", O + local, new Vector3(Random.Range(1.2f, 2.8f), 0.12f, 0.35f), i % 3 == 0 ? moss : darkWood, settlement.transform);
+                plank.transform.rotation = Quaternion.Euler(Random.Range(-5f, 5f), Random.Range(0f, 360f), Random.Range(-5f, 5f));
+            }
+
+            CreateBlock("Old Footpath West", O + new Vector3(-38f, 0.06f, -17f), new Vector3(20f, 0.08f, 3.0f), trail, settlement.transform);
+            CreateBlock("Old Footpath East", O + new Vector3(38f, 0.06f, -8f), new Vector3(22f, 0.08f, 3.0f), trail, settlement.transform);
+        }
+
+        private static void CreateAbandonedHut(Vector3 pos, Transform parent, Material wood, Material darkWood, Material stone, float rotation)
+        {
+            GameObject hut = new GameObject("Abandoned Forest Hut");
+            hut.transform.position = pos;
+            hut.transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            hut.transform.SetParent(parent);
+
+            CreateBlock("Hut Stone Footing", pos + new Vector3(0f, 0.18f, 0f), new Vector3(6.2f, 0.36f, 5.4f), stone, hut.transform);
+            CreateBlock("Hut Back Wall", pos + new Vector3(0f, 1.55f, 2.5f), new Vector3(6f, 2.9f, 0.42f), wood, hut.transform);
+            CreateBlock("Hut Left Wall", pos + new Vector3(-3f, 1.45f, 0f), new Vector3(0.42f, 2.7f, 5f), wood, hut.transform);
+            CreateBlock("Hut Right Broken Wall", pos + new Vector3(3f, 1.0f, -0.4f), new Vector3(0.42f, 1.8f, 3.7f), wood, hut.transform);
+            CreateBlock("Hut Roof Left", pos + new Vector3(-1.5f, 3.55f, 0f), new Vector3(3.6f, 0.45f, 6.2f), darkWood, hut.transform).transform.rotation = Quaternion.Euler(0f, rotation, -12f);
+            CreateBlock("Hut Roof Right Fallen", pos + new Vector3(1.9f, 2.0f, -0.6f), new Vector3(3.4f, 0.34f, 4.8f), darkWood, hut.transform).transform.rotation = Quaternion.Euler(0f, rotation + 14f, 22f);
+        }
+
+        private static void CreateCampfire(Vector3 pos, Transform parent, Material stone, Material wood, Material ember, bool lit)
+        {
+            GameObject fire = new GameObject(lit ? "Low Campfire" : "Cold Campfire");
+            fire.transform.position = pos;
+            fire.transform.SetParent(parent);
+
+            for (int i = 0; i < 8; i++)
+            {
+                float angle = i * 45f;
+                Vector3 offset = Quaternion.Euler(0f, angle, 0f) * new Vector3(1.15f, 0.18f, 0f);
+                CreateBlock("Fire Ring Stone", pos + offset, new Vector3(0.42f, 0.28f, 0.42f), stone, fire.transform);
+            }
+
+            CreateBlock("Charred Log A", pos + new Vector3(0f, 0.28f, 0f), new Vector3(2.2f, 0.22f, 0.22f), wood, fire.transform).transform.rotation = Quaternion.Euler(0f, 25f, 0f);
+            CreateBlock("Charred Log B", pos + new Vector3(0f, 0.34f, 0f), new Vector3(1.8f, 0.2f, 0.2f), wood, fire.transform).transform.rotation = Quaternion.Euler(0f, -34f, 0f);
+
+            if (lit)
+            {
+                CreateSceneryBlock("Small Ember Glow", pos + new Vector3(0f, 0.58f, 0f), new Vector3(0.85f, 0.5f, 0.85f), ember, fire.transform);
+                AddPointLight(fire.transform, new Vector3(0f, 1.1f, 0f), new Color(1f, 0.38f, 0.12f), 1.7f, 7f, "Campfire Glow");
+            }
+        }
+
+        private static void CreateBench(Vector3 pos, Transform parent, Material wood, Material darkWood, float rotation)
+        {
+            GameObject bench = new GameObject("Abandoned Bench");
+            bench.transform.position = pos;
+            bench.transform.rotation = Quaternion.Euler(0f, rotation, 0f);
+            bench.transform.SetParent(parent);
+
+            CreateBlock("Bench Seat", pos + new Vector3(0f, 0.72f, 0f), new Vector3(3.6f, 0.24f, 0.74f), wood, bench.transform);
+            CreateBlock("Bench Back", pos + new Vector3(0f, 1.18f, 0.44f), new Vector3(3.6f, 0.22f, 0.28f), wood, bench.transform);
+            CreateBlock("Bench Leg L", pos + new Vector3(-1.35f, 0.34f, 0f), new Vector3(0.22f, 0.68f, 0.22f), darkWood, bench.transform);
+            CreateBlock("Bench Leg R", pos + new Vector3(1.35f, 0.34f, 0f), new Vector3(0.22f, 0.68f, 0.22f), darkWood, bench.transform);
+        }
+
+        private static void CreateForestClutter(Vector3 O, Transform parent, Material pine, Material darkWood, Material wood, Material stone, Material moss, Material flower)
+        {
+            for (int i = 0; i < 180; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-60f, 60f), 0f, Random.Range(-36f, 52f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                CreatePineTree(O + local, parent, pine, darkWood, wood);
+            }
+
+            for (int i = 0; i < 135; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-58f, 58f), 0.18f, Random.Range(-38f, 50f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                GameObject rock = CreateBlock("Forest Stone", O + local, new Vector3(Random.Range(0.55f, 1.7f), Random.Range(0.3f, 0.9f), Random.Range(0.55f, 1.7f)), i % 3 == 0 ? moss : stone, parent);
+                rock.transform.rotation = Quaternion.Euler(Random.Range(-8f, 8f), Random.Range(0f, 360f), Random.Range(-8f, 8f));
+            }
+
+            for (int i = 0; i < 70; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-55f, 55f), 0.35f, Random.Range(-35f, 48f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                GameObject log = CreateBlock("Fallen Forest Log", O + local, new Vector3(0.55f, 0.55f, Random.Range(3.0f, 7.5f)), darkWood, parent);
+                log.transform.rotation = Quaternion.Euler(Random.Range(-6f, 6f), Random.Range(0f, 360f), Random.Range(-6f, 6f));
+            }
+
+            for (int i = 0; i < 190; i++)
+            {
+                Vector3 local = new Vector3(Random.Range(-62f, 62f), 0.09f, Random.Range(-42f, 52f));
+                if (IsOnForestTrail(local))
+                    continue;
+
+                GameObject tuft = CreateSceneryBlock("Ground Fern", O + local, new Vector3(Random.Range(0.45f, 1.2f), 0.08f, Random.Range(0.45f, 1.2f)), flower, parent);
+                tuft.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), Random.Range(-12f, 12f));
+            }
+        }
+
+        private static void CreateArtifactNest(Vector3 pos, Transform parent, Material stone, Material moss, Material wood, Material fern)
+        {
+            for (int i = 0; i < 7; i++)
+            {
+                float angle = i * 51.4f + Random.Range(-8f, 8f);
+                Vector3 offset = Quaternion.Euler(0f, angle, 0f) * new Vector3(Random.Range(1.5f, 2.8f), 0.18f, 0f);
+                GameObject rock = CreateBlock("Artifact Nest Stone", pos + offset, new Vector3(Random.Range(0.45f, 1.1f), Random.Range(0.25f, 0.65f), Random.Range(0.45f, 1.1f)), i % 2 == 0 ? moss : stone, parent);
+                rock.transform.rotation = Quaternion.Euler(Random.Range(-8f, 8f), Random.Range(0f, 360f), Random.Range(-8f, 8f));
+            }
+
+            GameObject fallenBranch = CreateBlock("Artifact Hiding Branch", pos + new Vector3(0.7f, 0.28f, -1.2f), new Vector3(0.28f, 0.28f, 3.4f), wood, parent);
+            fallenBranch.transform.rotation = Quaternion.Euler(4f, Random.Range(0f, 360f), 8f);
+
+            for (int i = 0; i < 10; i++)
+            {
+                Vector3 offset = new Vector3(Random.Range(-3.4f, 3.4f), 0.1f, Random.Range(-3.4f, 3.4f));
+                if (offset.sqrMagnitude < 1.2f)
+                    offset += offset.normalized * 1.2f;
+
+                GameObject tuft = CreateSceneryBlock("Artifact Fern Cover", pos + offset, new Vector3(Random.Range(0.55f, 1.4f), 0.08f, Random.Range(0.55f, 1.4f)), fern, parent);
+                tuft.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), Random.Range(-10f, 10f));
+            }
+        }
+
+        private static void CreateForestFinalBossClearing(Vector3 pos, Transform parent, Material stone, Material moss, Material wood, Material ember)
+        {
+            GameObject clearing = new GameObject("Forest Final Boss Clearing");
+            clearing.transform.SetParent(parent);
+
+            CreateBlock("Boss Clearing Ground", pos + new Vector3(0f, 0.04f, 0f), new Vector3(32f, 0.10f, 24f), moss, clearing.transform);
+            CreateBlock("Boss Clearing Ash Mark", pos + new Vector3(0f, 0.12f, 0f), new Vector3(18f, 0.08f, 13f), stone, clearing.transform);
+
+            for (int i = 0; i < 10; i++)
+            {
+                float angle = i * 36f;
+                Vector3 offset = Quaternion.Euler(0f, angle, 0f) * new Vector3(14f, 0f, 0f);
+                GameObject rune = CreateBlock("Forest Boss Rune Stone " + i, pos + offset + new Vector3(0f, 1.6f, 0f), new Vector3(0.9f, Random.Range(2.5f, 4.2f), 0.75f), i % 2 == 0 ? stone : moss, clearing.transform);
+                rune.transform.rotation = Quaternion.Euler(Random.Range(-4f, 4f), angle, Random.Range(-5f, 5f));
+            }
+
+            CreateBlock("Fallen Hall Rib Left", pos + new Vector3(-7f, 1.0f, 2f), new Vector3(0.55f, 2.0f, 13f), wood, clearing.transform).transform.rotation = Quaternion.Euler(0f, -18f, 23f);
+            CreateBlock("Fallen Hall Rib Right", pos + new Vector3(7f, 1.0f, 2f), new Vector3(0.55f, 2.0f, 13f), wood, clearing.transform).transform.rotation = Quaternion.Euler(0f, 18f, -23f);
+
+            for (int i = 0; i < 2; i++)
+            {
+                float x = i == 0 ? -9f : 9f;
+                CreateBlock("Boss Clearing Brazier", pos + new Vector3(x, 0.7f, -7f), new Vector3(1.8f, 1.2f, 1.8f), stone, clearing.transform);
+                CreateSceneryBlock("Boss Clearing Ember", pos + new Vector3(x, 1.55f, -7f), new Vector3(1.0f, 0.55f, 1.0f), ember, clearing.transform);
+                AddPointLight(clearing.transform, pos + new Vector3(x, 2.2f, -7f), new Color(1f, 0.35f, 0.08f), 2.0f, 8f, "Forest Boss Fire Glow");
+            }
+        }
+
+        private static void CreateForestSafetyRim(Vector3 O, Transform parent, Material stone, Material moss, Material pine, Material wood)
+        {
+            GameObject rim = new GameObject("Forest Safety Mountains");
+            rim.transform.SetParent(parent);
+
+            CreateBlock("Forest North Ridge Land", O + new Vector3(0f, -0.35f, 74f), new Vector3(190f, 0.7f, 20f), moss, rim.transform);
+            CreateBlock("Forest West Ridge Land", O + new Vector3(-88f, -0.35f, 0f), new Vector3(18f, 0.7f, 150f), moss, rim.transform);
+            CreateBlock("Forest East Ridge Land", O + new Vector3(88f, -0.35f, 0f), new Vector3(18f, 0.7f, 150f), moss, rim.transform);
+            CreateBlock("Forest South Ridge Land L", O + new Vector3(-63f, -0.35f, -82f), new Vector3(62f, 0.7f, 22f), moss, rim.transform);
+            CreateBlock("Forest South Ridge Land R", O + new Vector3(63f, -0.35f, -82f), new Vector3(62f, 0.7f, 22f), moss, rim.transform);
+
+            CreateInvisibleWall("Forest North Safety Wall", O + new Vector3(0f, 5f, 83f), new Vector3(188f, 18f, 2f), rim.transform);
+            CreateInvisibleWall("Forest West Safety Wall", O + new Vector3(-96f, 5f, 0f), new Vector3(2f, 18f, 152f), rim.transform);
+            CreateInvisibleWall("Forest East Safety Wall", O + new Vector3(96f, 5f, 0f), new Vector3(2f, 18f, 152f), rim.transform);
+            CreateInvisibleWall("Forest Dock Edge Safety L", O + new Vector3(-58f, 5f, -84f), new Vector3(72f, 18f, 2f), rim.transform);
+            CreateInvisibleWall("Forest Dock Edge Safety R", O + new Vector3(58f, 5f, -84f), new Vector3(72f, 18f, 2f), rim.transform);
+            CreateInvisibleWall("Forest Sea Channel End Safety", O + new Vector3(0f, 5f, -108f), new Vector3(42f, 18f, 2f), rim.transform);
+
+            for (int i = 0; i < 14; i++)
+            {
+                float x = -82f + i * 12.5f;
+                float h = Random.Range(9f, 18f);
+                CreateBlock("Forest Ridge Mountain N " + i, O + new Vector3(x, h * 0.5f - 0.6f, 86f), new Vector3(Random.Range(9f, 16f), h, Random.Range(8f, 13f)), i % 2 == 0 ? stone : moss, rim.transform);
+            }
+
+            for (int i = 0; i < 16; i++)
+            {
+                float z = -72f + i * 10f;
+                float h = Random.Range(8f, 17f);
+                CreateBlock("Forest Ridge Mountain W " + i, O + new Vector3(-97f, h * 0.5f - 0.6f, z), new Vector3(Random.Range(8f, 13f), h, Random.Range(8f, 14f)), i % 2 == 0 ? stone : moss, rim.transform);
+                CreateBlock("Forest Ridge Mountain E " + i, O + new Vector3(97f, h * 0.5f - 0.6f, z), new Vector3(Random.Range(8f, 13f), h, Random.Range(8f, 14f)), i % 2 == 1 ? stone : moss, rim.transform);
+            }
+
+            for (int i = 0; i < 12; i++)
+            {
+                float x = -84f + i * 15.2f;
+                if (Mathf.Abs(x) < 28f)
+                    continue;
+
+                float h = Random.Range(7f, 15f);
+                CreateBlock("Forest South Channel Mountain " + i, O + new Vector3(x, h * 0.5f - 0.6f, -92f), new Vector3(Random.Range(10f, 18f), h, Random.Range(8f, 15f)), i % 2 == 0 ? stone : moss, rim.transform);
+            }
+
+            for (int i = 0; i < 22; i++)
+            {
+                float z = -62f + i * 8f;
+                float side = i % 2 == 0 ? -1f : 1f;
+                CreatePineTree(O + new Vector3(side * Random.Range(76f, 88f), 0f, z), rim.transform, pine, wood, wood);
+            }
+        }
+
+        private static bool IsOnForestTrail(Vector3 local)
+        {
+            if (Mathf.Abs(local.x) < 8f && local.z > -50f && local.z < 54f)
+                return true;
+            if (Mathf.Abs(local.z - 18f) < 6f && local.x > -38f && local.x < 4f)
+                return true;
+            if (Mathf.Abs(local.z - 32f) < 6f && local.x > -2f && local.x < 38f)
+                return true;
+            if ((new Vector2(local.x + 36f, local.z - 14f)).sqrMagnitude < 36f)
+                return true;
+            if ((new Vector2(local.x - 35f, local.z - 29f)).sqrMagnitude < 36f)
+                return true;
+            if ((new Vector2(local.x + 8f, local.z - 48f)).sqrMagnitude < 36f)
+                return true;
+
+            return false;
+        }
+
+        private static void CreateForestBackdrop(Vector3 O, Transform parent, Material stone, Material snow, Material pine, Material moss)
+        {
+            GameObject backdrop = new GameObject("Coastal Forest Distant Mountains");
+            backdrop.transform.SetParent(parent);
+
+            Material farStone = MakeMat(null, 0.16f); farStone.color = new Color(0.24f, 0.31f, 0.34f);
+            float[] xs = { -80f, -42f, 0f, 46f, 86f };
+            float[] heights = { 26f, 38f, 46f, 34f, 28f };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                CreateSceneryBlock("Forest Far Mountain " + i, O + new Vector3(xs[i], heights[i], 78f + i * 3f),
+                    new Vector3(38f, heights[i] * 2f, 30f), farStone, backdrop.transform, Quaternion.Euler(0f, Random.Range(-6f, 6f), 0f));
+                CreateSceneryBlock("Forest Far Snow " + i, O + new Vector3(xs[i], heights[i] * 1.82f, 78f + i * 3f),
+                    new Vector3(16f, heights[i] * 0.30f, 14f), snow, backdrop.transform);
+            }
+
+            for (int i = 0; i < 34; i++)
+            {
+                float x = -64f + i * 4f;
+                if (Mathf.Abs(x) < 9f)
+                    continue;
+
+                float h = Random.Range(5f, 10f);
+                CreateSceneryBlock("Forest Wall Trunk " + i, O + new Vector3(x, h * 0.5f, 56f), new Vector3(0.55f, h, 0.55f), moss, backdrop.transform);
+                CreateSceneryBlock("Forest Wall Crown " + i, O + new Vector3(x, h + 2.1f, 56f), new Vector3(4f, 5f, 4f), pine, backdrop.transform);
+            }
+        }
+
+        private static void CreateYamatoDistantBackdrop(Vector3 O, Transform parent,
+            Material stone, Material snow, Material bamboo, Material moss)
+        {
+            GameObject backdrop = new GameObject("Yamato Distant Backdrop");
+            backdrop.transform.SetParent(parent);
+
+            Material farStone = MakeMat(null, 0.18f); farStone.color = new Color(0.22f, 0.30f, 0.28f);
+            Material farPine = MakeMat(null, 0.10f); farPine.color = new Color(0.10f, 0.24f, 0.16f);
+            Material haze = MakeMat(null, 0.06f); haze.color = new Color(0.46f, 0.54f, 0.50f);
+
+            float[] xs = { -145f, -95f, -42f, 16f, 72f, 132f };
+            float[] heights = { 30f, 44f, 36f, 50f, 34f, 42f };
+            for (int i = 0; i < xs.Length; i++)
+            {
+                Vector3 peak = O + new Vector3(xs[i], heights[i], 146f + i * 4f);
+                CreateSceneryBlock("Far Mountain " + i, peak, new Vector3(46f, heights[i] * 2f, 34f), farStone, backdrop.transform,
+                    Quaternion.Euler(0f, Random.Range(-8f, 8f), 0f));
+                CreateSceneryBlock("Far Snow Cap " + i, peak + new Vector3(0f, heights[i] * 0.78f, 0f),
+                    new Vector3(22f, heights[i] * 0.34f, 18f), snow, backdrop.transform);
+            }
+
+            for (int i = 0; i < 46; i++)
+            {
+                float x = -112f + i * 5f;
+                if (Mathf.Abs(x) < 12f)
+                    continue;
+
+                float h = Random.Range(5f, 11f);
+                CreateSceneryBlock("Distant Forest Trunk " + i, O + new Vector3(x, h * 0.5f, 111f + Random.Range(-3f, 8f)),
+                    new Vector3(0.55f, h, 0.55f), moss, backdrop.transform);
+                CreateSceneryBlock("Distant Forest Crown " + i, O + new Vector3(x, h + 2.2f, 111f + Random.Range(-3f, 8f)),
+                    new Vector3(4.5f, 5.5f, 4.5f), i % 3 == 0 ? bamboo : farPine, backdrop.transform);
+            }
+
+            CreateSceneryBlock("Haze Plane North", O + new Vector3(0f, 10f, 124f), new Vector3(232f, 18f, 0.35f), haze, backdrop.transform);
+        }
+
+        private static void CreateYamatoFinalBoss(Vector3 O, Transform parent,
+            Material bossMat, Material hitFlash, Material stone, Material bamboo, Material red)
+        {
+            Vector3 arena = O + new Vector3(0f, 0f, 104f);
+            GameObject bossRoot = new GameObject("Yamato Final Boss Grove");
+            bossRoot.transform.SetParent(parent);
+
+            Material path = MakeMat(null, 0.16f); path.color = new Color(0.32f, 0.28f, 0.24f);
+            CreateBlock("Boss Grove Path", arena + new Vector3(0f, 0.05f, -8f), new Vector3(18f, 0.12f, 30f), path, bossRoot.transform);
+            CreateBlock("Boss Shrine Marker", arena + new Vector3(0f, 0.6f, 7f), new Vector3(8f, 1.2f, 3f), stone, bossRoot.transform);
+
+            for (int i = 0; i < 18; i++)
+            {
+                float side = i % 2 == 0 ? -1f : 1f;
+                float z = -18f + (i / 2) * 4.8f;
+                CreateBambooClump(arena + new Vector3(side * Random.Range(12f, 22f), 0f, z), bossRoot.transform, bamboo);
+            }
+
+            GameObject boss = CreateEnemy("Main Villain - Oni Warlord", arena + new Vector3(0f, 1f, 2f), bossMat, hitFlash, bossRoot.transform);
+            boss.transform.localScale = new Vector3(1.6f, 1.6f, 1.6f);
+            var health = boss.GetComponent<Health>();
+            if (health != null)
+            {
+                SerializedObject healthSo = new SerializedObject(health);
+                healthSo.FindProperty("maxHealth").floatValue = 320f;
+                healthSo.ApplyModifiedProperties();
+            }
+
+            AddPointLight(bossRoot.transform, arena + new Vector3(0f, 3f, 6f), new Color(1f, 0.12f, 0.08f), 3.2f, 13f, "Villain Warning Glow");
+        }
+
+        private static void CreateBambooDojoEntranceAndInterior(Vector3 O, Transform parent,
+            Material wood, Material lightWood, Material paper, Material red, Material darkRed,
+            Material stone, Material bamboo, Material bossMat, Material hitFlash)
+        {
+            GameObject exterior = new GameObject("Bamboo Dojo Exterior");
+            exterior.transform.SetParent(parent);
+            // Push the enterable dojo OUT of the spawn area and over to the east-side
+            // village cluster, alongside the shrine path. (Was at z = -82 right next
+            // to the dock; player would walk into it immediately. Now placed north-east
+            // along the path so player must walk past several houses to reach it.)
+            Vector3 pos = O + new Vector3(46f, 0f, 48f);
+
+            Material path = MakeMat(null, 0.08f); path.color = new Color(0.54f, 0.48f, 0.38f);
+            Material shadow = MakeMat(null, 0.05f); shadow.color = new Color(0.08f, 0.07f, 0.06f);
+            Material tatami = MakeMat(null, 0.05f); tatami.color = new Color(0.68f, 0.70f, 0.46f);
+
+            // Approach stones leading from the main shrine path to the dojo entrance
+            for (int i = 0; i < 8; i++)
+                CreateBlock("Dojo Approach Stone " + i, pos + new Vector3(-i * 3.6f, 0.08f, -8f), new Vector3(3.2f, 0.12f, 3.2f), path, exterior.transform);
+
+            // A few sakura/pine accents around it (NOT bamboo — bamboo was covering it before)
+            for (int i = 0; i < 4; i++)
+            {
+                float side = i % 2 == 0 ? -1f : 1f;
+                CreatePineTree(pos + new Vector3(side * 11f, 0f, -2f + i * 3f), exterior.transform, bamboo, wood, lightWood);
+            }
+
+            CreateBlock("Dojo Foundation", pos + new Vector3(0f, 0.45f, 0f), new Vector3(17f, 0.9f, 14f), stone, exterior.transform);
+            CreateBlock("Dojo Back Wall", pos + new Vector3(0f, 3.6f, 5.8f), new Vector3(16f, 6f, 0.42f), wood, exterior.transform);
+            CreateBlock("Dojo Left Wall", pos + new Vector3(-8f, 3.6f, 0f), new Vector3(0.42f, 6f, 12f), wood, exterior.transform);
+            CreateBlock("Dojo Right Wall", pos + new Vector3(8f, 3.6f, 0f), new Vector3(0.42f, 6f, 12f), wood, exterior.transform);
+            CreateBlock("Dojo Shoji Left", pos + new Vector3(-3.2f, 3.6f, -6.2f), new Vector3(5.2f, 5f, 0.18f), paper, exterior.transform);
+            CreateBlock("Dojo Shoji Right", pos + new Vector3(3.2f, 3.6f, -6.2f), new Vector3(5.2f, 5f, 0.18f), paper, exterior.transform);
+            CreateBlock("Dojo Threshold Opening", pos + new Vector3(0f, 1.1f, -6.45f), new Vector3(4.1f, 1.0f, 0.22f), shadow, exterior.transform);
+            CreateBlock("Dojo Roof Lower", pos + new Vector3(0f, 7.6f, 0f), new Vector3(20f, 0.6f, 16f), red, exterior.transform);
+            CreateBlock("Dojo Roof Upper", pos + new Vector3(0f, 9.3f, 0f), new Vector3(13f, 0.55f, 10f), darkRed, exterior.transform);
+            AddPointLight(exterior.transform, pos + new Vector3(0f, 3.5f, -5.2f), new Color(1f, 0.66f, 0.30f), 2.2f, 9f, "Dojo Door Glow");
+
+            GameObject trigger = new GameObject("Bamboo Dojo Entrance Trigger");
+            trigger.transform.SetParent(exterior.transform);
+            trigger.transform.position = pos + new Vector3(0f, 1.3f, -8.5f);
+            BoxCollider triggerCollider = trigger.AddComponent<BoxCollider>();
+            triggerCollider.size = new Vector3(8f, 4f, 7f);
+
+            GameObject interior = new GameObject("Hidden Bamboo Dojo Interior");
+            interior.transform.SetParent(parent);
+            Vector3 I = O + new Vector3(92f, 0f, -80f);
+            CreateBlock("Interior Floor", I + new Vector3(0f, -0.5f, 0f), new Vector3(46f, 1f, 42f), tatami, interior.transform);
+            CreateBlock("Interior North Wall", I + new Vector3(0f, 3f, 21f), new Vector3(46f, 7f, 1f), wood, interior.transform);
+            CreateBlock("Interior South Wall", I + new Vector3(0f, 3f, -21f), new Vector3(46f, 7f, 1f), wood, interior.transform);
+            CreateBlock("Interior West Wall", I + new Vector3(-23f, 3f, 0f), new Vector3(1f, 7f, 42f), wood, interior.transform);
+            CreateBlock("Interior East Wall", I + new Vector3(23f, 3f, 0f), new Vector3(1f, 7f, 42f), wood, interior.transform);
+            // Interior is OPEN to the sky — no opaque roof. Previously a dark roof block
+            // sat right above the play space and blacked out the interior. Replaced with
+            // bright lanterns + a skylight fill so the player can actually see.
+            CreateBlock("Boss Arena Mat", I + new Vector3(0f, 0.06f, 0f), new Vector3(24f, 0.12f, 18f), path, interior.transform);
+
+            // Visible rafters (thin beams, do not block light)
+            for (int i = 0; i < 5; i++)
+            {
+                float z = -16f + i * 8f;
+                CreateBlock("Rafter " + i, I + new Vector3(0f, 6.6f, z), new Vector3(44f, 0.25f, 0.35f), wood, interior.transform);
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                float x = -15f + i * 6f;
+                CreateBlock("Interior Post " + i, I + new Vector3(x, 3f, -14f), new Vector3(0.55f, 6f, 0.55f), lightWood, interior.transform);
+                CreateBlock("Interior Post Back " + i, I + new Vector3(x, 3f, 14f), new Vector3(0.55f, 6f, 0.55f), lightWood, interior.transform);
+            }
+
+            // Hanging paper lanterns (warm fill light so the interior reads clearly)
+            Material lanternMat = MakeMat(null, 0.06f); lanternMat.color = new Color(1f, 0.86f, 0.52f);
+            for (int i = 0; i < 4; i++)
+            {
+                float x = -15f + i * 10f;
+                CreateBlock("Lantern Body " + i, I + new Vector3(x, 5.3f, 0f), new Vector3(1.2f, 1.4f, 1.2f), lanternMat, interior.transform);
+                AddPointLight(interior.transform, I + new Vector3(x, 5f, 0f), new Color(1f, 0.78f, 0.42f), 2.6f, 14f, "Dojo Lantern " + i);
+            }
+
+            GameObject boss = CreateEnemy("Final Boss - Dojo Warlord", I + new Vector3(0f, 1f, 7f), bossMat, hitFlash, interior.transform);
+            boss.transform.localScale = new Vector3(1.9f, 1.9f, 1.9f);
+            Health bossHealth = boss.GetComponent<Health>();
+            if (bossHealth != null)
+            {
+                SerializedObject healthSo = new SerializedObject(bossHealth);
+                healthSo.FindProperty("maxHealth").floatValue = 420f;
+                healthSo.ApplyModifiedProperties();
+            }
+
+            AddPointLight(interior.transform, I + new Vector3(0f, 6f, 4f), new Color(1f, 0.34f, 0.16f), 3.2f, 22f, "Dojo Boss Warning Glow");
+            // Bright ambient sky-fill so even the corners are readable
+            AddPointLight(interior.transform, I + new Vector3(0f, 9f, 0f), new Color(0.96f, 0.92f, 0.84f), 3.2f, 36f, "Dojo Skylight");
+
+            YamatoBuildingEntrance entrance = trigger.AddComponent<YamatoBuildingEntrance>();
+            entrance.interiorRoot = interior;
+            entrance.destinationTarget = I + new Vector3(0f, 1.05f, -12f);
+            entrance.prompt = "Press E to enter the dojo";
+            interior.SetActive(false);
+        }
+
+        private static void CreateYamatoArrivalDock(Vector3 O, Transform parent, Material water, Material wood, Material stone)
+        {
+            GameObject arrival = new GameObject("Yamato Arrival Sea Shore");
+            arrival.transform.SetParent(parent);
+
+            // Wide sea expanse
+            CreateSceneryBlock("Yamato Sea (Far)",   O + new Vector3(0f,  -0.55f, -110f), new Vector3(260f, 0.18f, 120f), water, arrival.transform);
+            CreateSceneryBlock("Yamato Sea (Near)",  O + new Vector3(0f,  -0.50f,  -58f), new Vector3(180f, 0.20f,  60f), water, arrival.transform);
+
+            // Sandy beach + curved shoreline (use wood-tinted sand via stone darkened with sand-mix)
+            Material beach = MakeMat(null, 0.06f); beach.color = new Color(0.86f, 0.78f, 0.58f);
+            Material wetSand = MakeMat(null, 0.10f); wetSand.color = new Color(0.62f, 0.54f, 0.40f);
+            CreateBlock("Yamato Beach",           O + new Vector3(0f, -0.30f, -32f), new Vector3(150f, 0.22f, 22f), beach, arrival.transform);
+            CreateBlock("Yamato Wet Sand Strip",  O + new Vector3(0f, -0.34f, -42f), new Vector3(150f, 0.18f,  6f), wetSand, arrival.transform);
+
+            // Stone breakwater rocks dotted along the shoreline
+            for (int i = 0; i < 12; i++)
+            {
+                float x = -70f + i * 12.5f;
+                if (Mathf.Abs(x) < 14f) continue; // leave dock mouth clear
+                Vector3 rp = O + new Vector3(x, -0.10f, -46f + Random.Range(-2f, 2f));
+                GameObject rock = CreateBlock("Shore Boulder " + i, rp,
+                    new Vector3(Random.Range(1.6f, 3.2f), Random.Range(0.9f, 2.0f), Random.Range(1.6f, 3.2f)),
+                    stone, arrival.transform);
+                rock.transform.rotation = Quaternion.Euler(Random.Range(-12f, 12f), Random.Range(0f, 360f), Random.Range(-12f, 12f));
+            }
+
+            // Long wooden dock extending into the sea (boat lands at the far head)
+            CreateBlock("Dock Run",      O + new Vector3(0f,  0.12f, -34f), new Vector3(7f,  0.26f, 36f), wood, arrival.transform);
+            CreateBlock("Dock Head Pad", O + new Vector3(0f,  0.16f, -54f), new Vector3(16f, 0.30f, 9f),  wood, arrival.transform);
+            CreateBlock("Dock Side Rail L", O + new Vector3(-3.6f, 0.55f, -34f), new Vector3(0.18f, 0.5f, 34f), wood, arrival.transform);
+            CreateBlock("Dock Side Rail R", O + new Vector3( 3.6f, 0.55f, -34f), new Vector3(0.18f, 0.5f, 34f), wood, arrival.transform);
+            for (int i = 0; i < 9; i++)
+            {
+                float z = -52f + i * 4.4f;
+                CreateBlock("Dock Post L " + i, O + new Vector3(-3.8f, -0.6f, z), new Vector3(0.45f, 2.4f, 0.45f), stone, arrival.transform);
+                CreateBlock("Dock Post R " + i, O + new Vector3( 3.8f, -0.6f, z), new Vector3(0.45f, 2.4f, 0.45f), stone, arrival.transform);
+            }
+            // Lanterns along the dock
+            for (int i = 0; i < 5; i++)
+            {
+                float z = -50f + i * 9f;
+                CreateStoneLantern(O + new Vector3(-3.6f, 0.30f, z), arrival.transform, stone);
+                CreateStoneLantern(O + new Vector3( 3.6f, 0.30f, z), arrival.transform, stone);
+            }
+            // Welcoming Torii at the dock head facing the sea
+            Material toriiRed = MakeMat(null, 0.16f); toriiRed.color = new Color(0.84f, 0.12f, 0.12f);
+            CreateToriiGate("Dock Welcome Torii", O + new Vector3(0f, 0.30f, -50f), toriiRed, wood, arrival.transform);
+
+            // Soft warm light over the dock
+            AddPointLight(arrival.transform, O + new Vector3(0f, 4f, -42f), new Color(1f, 0.78f, 0.42f), 2.6f, 22f, "Dock Lantern Wash");
         }
 
 
@@ -1274,6 +2056,145 @@ namespace NordicWilds.EditorTools
             // Cargo — two chests amidship
             for (int i=0;i<2;i++)
                 CreateAleBarel(pos+new Vector3(-0.8f+i*1.6f,1.8f,0), boat.transform, woodDark, metal);
+        }
+
+        // ── Frostheim Village Palisade (gives the village a clear silhouette) ────
+        private static void CreateFrostheimVillagePerimeter(Transform parent,
+            Material wood, Material woodDark, Material stone, Material bannerRed, Material bannerBlack)
+        {
+            GameObject ring = new GameObject("Frostheim Village Palisade");
+            ring.transform.SetParent(parent);
+
+            // Three-sided wooden palisade enclosing the core village (south is open
+            // so the entrance causeway still leads in). Logs angled like sharpened stakes.
+            void StakeRow(Vector3 start, Vector3 step, int count, float rotY)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    Vector3 p = start + step * i;
+                    GameObject stake = CreateBlock("Palisade Stake",
+                        p, new Vector3(0.55f, Random.Range(4.2f, 5.4f), 0.55f),
+                        i % 4 == 0 ? woodDark : wood, ring.transform);
+                    stake.transform.rotation = Quaternion.Euler(Random.Range(-2f, 2f), rotY, Random.Range(-2f, 2f));
+                }
+            }
+            // West wall
+            StakeRow(new Vector3(-58f, 2.0f, -8f), new Vector3(0f, 0f, 2.6f), 28, 0f);
+            // East wall
+            StakeRow(new Vector3( 58f, 2.0f, -8f), new Vector3(0f, 0f, 2.6f), 28, 0f);
+            // North wall (with break at center for altar approach)
+            for (int i = 0; i < 30; i++)
+            {
+                float x = -56f + i * 4f;
+                if (Mathf.Abs(x) < 8f) continue;
+                GameObject stake = CreateBlock("Palisade Stake N",
+                    new Vector3(x, 2.0f, 60f), new Vector3(0.55f, Random.Range(4.2f, 5.4f), 0.55f),
+                    i % 4 == 0 ? woodDark : wood, ring.transform);
+                stake.transform.rotation = Quaternion.Euler(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
+            }
+
+            // Reinforced corner watchposts (small platforms at each NW/NE corner)
+            void CornerPost(Vector3 p, Material banner)
+            {
+                CreateBlock("Corner Post Pillar", p + new Vector3(0f, 3f, 0f), new Vector3(1.2f, 6f, 1.2f), woodDark, ring.transform);
+                CreateBlock("Corner Post Crown", p + new Vector3(0f, 6.2f, 0f), new Vector3(2.2f, 0.4f, 2.2f), wood, ring.transform);
+                CreateBanner(p + new Vector3(0f, 5f, 0f), ring.transform, banner, woodDark);
+            }
+            CornerPost(new Vector3(-58f, 0f,  60f), bannerRed);
+            CornerPost(new Vector3( 58f, 0f,  60f), bannerBlack);
+            CornerPost(new Vector3(-58f, 0f, -10f), bannerBlack);
+            CornerPost(new Vector3( 58f, 0f, -10f), bannerRed);
+
+            // Main gate posts (two big timber columns flanking the south entrance)
+            CreateBlock("Gate Post L", new Vector3(-7f, 3.5f, -10f), new Vector3(1.4f, 7f, 1.4f), woodDark, ring.transform);
+            CreateBlock("Gate Post R", new Vector3( 7f, 3.5f, -10f), new Vector3(1.4f, 7f, 1.4f), woodDark, ring.transform);
+            CreateBlock("Gate Lintel",  new Vector3(0f, 7.3f, -10f), new Vector3(17f, 0.7f, 1.0f), wood,    ring.transform);
+            CreateBlock("Gate Sign",    new Vector3(0f, 5.8f, -10f), new Vector3(5f, 1.4f, 0.2f),  woodDark, ring.transform);
+
+            // A small structured row of standing weapon racks inside the gate — clearly Nordic
+            Material steel = MakeMat(null, 0.55f); steel.color = new Color(0.66f, 0.70f, 0.74f);
+            for (int i = 0; i < 4; i++)
+            {
+                float x = -10f + i * 6f;
+                CreateBlock("Weapon Rack Beam", new Vector3(x, 1.8f, -4f), new Vector3(2.4f, 0.18f, 0.18f), wood, ring.transform);
+                CreateBlock("Rack Axe",  new Vector3(x - 0.6f, 1.4f, -4f), new Vector3(0.18f, 1.4f, 0.18f), wood,  ring.transform);
+                CreateBlock("Rack Blade",new Vector3(x + 0.6f, 1.4f, -4f), new Vector3(0.16f, 1.6f, 0.16f), steel, ring.transform);
+            }
+
+            // Heavy ground brazier near the gate — visible signifier of "Viking village"
+            Material ember = MakeMat(null, 0.20f); ember.color = new Color(1f, 0.45f, 0.10f);
+            void Brazier(Vector3 p)
+            {
+                CreateBlock("Brazier Bowl", p + new Vector3(0f, 1.2f, 0f), new Vector3(1.6f, 0.4f, 1.6f), woodDark, ring.transform);
+                CreateBlock("Brazier Stand", p + new Vector3(0f, 0.5f, 0f), new Vector3(0.4f, 1.1f, 0.4f), woodDark, ring.transform);
+                CreateSceneryBlock("Brazier Flame", p + new Vector3(0f, 1.8f, 0f), new Vector3(1.0f, 1.2f, 1.0f), ember, ring.transform);
+                AddPointLight(ring.transform, p + new Vector3(0f, 2f, 0f), new Color(1f, 0.55f, 0.18f), 3.2f, 16f, "Brazier Glow");
+            }
+            Brazier(new Vector3(-12f, 0f, -10f));
+            Brazier(new Vector3( 12f, 0f, -10f));
+            Brazier(new Vector3(  0f, 0f,  10f));
+            Brazier(new Vector3(-22f, 0f,  22f));
+            Brazier(new Vector3( 22f, 0f,  22f));
+        }
+
+        // ── Frostheim Raid: pre-placed foes that engage the player on arrival ────
+        private static void CreateFrostheimRaidEncounter(Transform parent)
+        {
+            GameObject raid = new GameObject("Frostheim Raid Encounter");
+            raid.transform.SetParent(parent);
+
+            Material raiderMat = MakeMat(null, 0.18f); raiderMat.color = new Color(0.18f, 0.16f, 0.20f);
+            Material chiefMat  = MakeMat(null, 0.32f); chiefMat.color  = new Color(0.55f, 0.10f, 0.10f);
+            Material hitFlash  = MakeMat(null, 0.00f); hitFlash.color  = Color.white;
+
+            // Five raiders patrolling the village square
+            Vector3[] raiderSpots =
+            {
+                new Vector3(-8f, 1f, 12f), new Vector3( 8f, 1f, 14f),
+                new Vector3(-18f, 1f, 24f), new Vector3( 20f, 1f, 26f),
+                new Vector3(  0f, 1f, 30f)
+            };
+            for (int i = 0; i < raiderSpots.Length; i++)
+                CreateEnemy("Frostheim Raider " + (i + 1), raiderSpots[i], raiderMat, hitFlash, raid.transform);
+
+            // Raid leader near the great hall steps
+            GameObject chief = CreateEnemy("Raid Chieftain", new Vector3(0f, 1f, 38f), chiefMat, hitFlash, raid.transform);
+            chief.transform.localScale = new Vector3(1.6f, 1.6f, 1.6f);
+            Health chiefHp = chief.GetComponent<Health>();
+            if (chiefHp != null)
+            {
+                SerializedObject so = new SerializedObject(chiefHp);
+                so.FindProperty("maxHealth").floatValue = 280f;
+                so.ApplyModifiedProperties();
+            }
+        }
+
+        // ── Soft snowfall layer (gentler than the blizzard, closer to camera) ────
+        private static void CreateLightSnowfall(Transform parent)
+        {
+            GameObject snow = new GameObject("Frostheim Light Snowfall");
+            snow.transform.position = new Vector3(0f, 28f, 0f);
+            snow.transform.SetParent(parent);
+
+            ParticleSystem ps = snow.AddComponent<ParticleSystem>();
+            var rend = snow.GetComponent<ParticleSystemRenderer>();
+            rend.sharedMaterial = new Material(Shader.Find("Sprites/Default")) { color = new Color(1f, 1f, 1f, 0.85f) };
+
+            var m = ps.main;
+            m.startLifetime = 8f;
+            m.startSpeed    = new ParticleSystem.MinMaxCurve(1.2f, 2.4f);
+            m.startSize     = new ParticleSystem.MinMaxCurve(0.10f, 0.22f);
+            m.maxParticles  = 1400;
+            m.gravityModifier = 0.05f;
+
+            var em = ps.emission; em.rateOverTime = 220f;
+            var sh = ps.shape;   sh.shapeType = ParticleSystemShapeType.Box; sh.scale = new Vector3(220f, 1f, 220f);
+
+            var vel = ps.velocityOverLifetime;
+            vel.enabled = true;
+            vel.x = new ParticleSystem.MinMaxCurve(-0.6f, 0.6f);
+            vel.y = new ParticleSystem.MinMaxCurve(-2.4f, -1.2f);
+            vel.z = new ParticleSystem.MinMaxCurve(-0.4f, 0.4f);
         }
 
         private static void CreateBlizzard(Transform parent)
@@ -1964,60 +2885,119 @@ namespace NordicWilds.EditorTools
         //  SHARED BUILDERS — Portals, Sakura, Torii, Pagoda
         // ╚══════════════════════════════════════════════════════════════════════════╝
 
-        private static void CreatePortalGateway(string name, Vector3 pos, Transform parent,
+        private static GameObject CreatePortalGateway(string name, Vector3 pos, Transform parent,
             Material pillarMat, Color glowColor, Color lightColor, Color particleColor,
             Vector3 destination, bool isReturn)
         {
+            // ── Build the portal in LOCAL space so rotating the group doesn't desync
+            //    the pieces. (Previously pillars were placed in world coords then
+            //    parented to a rotated group, which is what made the portal look
+            //    sideways and the glow plane perpendicular to the pillars.)
             GameObject group = new GameObject(name);
-            group.transform.position = pos;
             group.transform.SetParent(parent);
-            if (!isReturn) group.transform.rotation = Quaternion.Euler(0,-28f,0);
+            group.transform.position = pos;
+            // The portal facing — the player walks through along the local +Z axis.
+            // Approach side is local -Z. Both portals face their approaching player.
+            group.transform.rotation = Quaternion.identity;
 
-            // Arch
-            CreateBlock("Pillar L", pos+new Vector3(-3.0f,3.8f,0),new Vector3(0.9f,7.6f,0.9f), pillarMat, group.transform);
-            CreateBlock("Pillar R", pos+new Vector3( 3.0f,3.8f,0),new Vector3(0.9f,7.6f,0.9f), pillarMat, group.transform);
-            CreateBlock("Arch",     pos+new Vector3(0,7.6f,0),     new Vector3(8.8f,1.2f,1.2f), pillarMat, group.transform);
-            CreateBlock("Sub Arch", pos+new Vector3(0,6.6f,0),     new Vector3(7.2f,0.6f,0.7f), pillarMat, group.transform);
-            // Rune carvings on pillars
-            for (int i=0;i<3;i++)
+            // Torii-style gateway silhouette so it actually reads as Japanese.
+            // Two tall vermillion pillars, a curved upper kasagi, and a lower nuki.
+            CreateBlock("Pillar L", new Vector3(-3.2f, 3.8f, 0f), new Vector3(0.9f, 7.6f, 0.9f), pillarMat, group.transform);
+            CreateBlock("Pillar R", new Vector3( 3.2f, 3.8f, 0f), new Vector3(0.9f, 7.6f, 0.9f), pillarMat, group.transform);
+            CreateBlock("Kasagi (Top Beam)", new Vector3(0f, 7.7f, 0f), new Vector3(9.8f, 0.85f, 1.05f), pillarMat, group.transform);
+            CreateBlock("Shimagi", new Vector3(0f, 7.05f, 0f), new Vector3(9.0f, 0.45f, 0.85f), pillarMat, group.transform);
+            CreateBlock("Nuki (Cross Beam)", new Vector3(0f, 5.8f, 0f), new Vector3(7.6f, 0.55f, 0.6f), pillarMat, group.transform);
+            CreateBlock("Gakuzan", new Vector3(0f, 6.5f, 0f), new Vector3(0.6f, 1.4f, 0.85f), pillarMat, group.transform);
+            // Curved eave tips on the kasagi (slight tilt up, traditional shape)
+            CreateBlock("Kasagi Tip L", new Vector3(-4.5f, 7.6f, 0f), new Vector3(2.4f, 0.4f, 1.0f), pillarMat, group.transform).transform.localRotation = Quaternion.Euler(0f, 0f, 14f);
+            CreateBlock("Kasagi Tip R", new Vector3( 4.5f, 7.6f, 0f), new Vector3(2.4f, 0.4f, 1.0f), pillarMat, group.transform).transform.localRotation = Quaternion.Euler(0f, 0f, -14f);
+
+            // Rune / charm streamers on the pillars — front faces only
+            Material runeMat = MakeMat(null, 0.8f);
+            runeMat.color = glowColor;
+            for (int i = 0; i < 3; i++)
             {
-                CreateBlock("Rune L "+i,pos+new Vector3(-3.05f,2f+i*1.8f,0),new Vector3(0.12f,0.8f,0.95f),
-                    MakeMat(null,0.8f), group.transform).GetComponent<Renderer>().sharedMaterial.color = glowColor;
-                CreateBlock("Rune R "+i,pos+new Vector3( 3.05f,2f+i*1.8f,0),new Vector3(0.12f,0.8f,0.95f),
-                    MakeMat(null,0.8f), group.transform).GetComponent<Renderer>().sharedMaterial.color = glowColor;
+                CreateBlock("Charm L " + i, new Vector3(-3.25f, 2f + i * 1.8f, -0.5f), new Vector3(0.14f, 0.85f, 0.06f), runeMat, group.transform);
+                CreateBlock("Charm R " + i, new Vector3( 3.25f, 2f + i * 1.8f, -0.5f), new Vector3(0.14f, 0.85f, 0.06f), runeMat, group.transform);
             }
-            // Glowing portal plane
-            Material glowMat = new Material(Shader.Find("Unlit/Color")); glowMat.color = glowColor;
-            GameObject glowObj = CreateBlock("Portal Glow",
-                pos+new Vector3(0,3.5f,0),new Vector3(5.2f,6.8f,0.45f),glowMat,group.transform);
-            if (isReturn) glowObj.transform.rotation = Quaternion.Euler(0,-90,0);
-            // Portal light
+
+            // Glowing portal plane — fills the gateway opening, faces the approach (-Z).
+            // Width ~= pillar gap, height ~= up to the nuki cross-beam.
+            Material glowMat = new Material(Shader.Find("Unlit/Color"));
+            glowMat.color = glowColor;
+            GameObject glowObj = CreateBlock("Portal Glow", new Vector3(0f, 3.0f, 0f), new Vector3(5.6f, 5.4f, 0.18f), glowMat, group.transform);
+            // Add a second softer back-glow plane for depth
+            Material backGlow = new Material(Shader.Find("Unlit/Color"));
+            backGlow.color = new Color(glowColor.r * 0.55f, glowColor.g * 0.55f, glowColor.b * 0.85f, glowColor.a);
+            CreateBlock("Portal Back Glow", new Vector3(0f, 3.0f, 0.12f), new Vector3(5.2f, 5.0f, 0.06f), backGlow, group.transform);
+
+            // Portal light at the centre of the opening (no parenting tricks).
             Light pl = glowObj.AddComponent<Light>();
-            pl.type = LightType.Point; pl.color = lightColor;
-            pl.intensity = 6f; pl.range = 20f;
-            // Trigger collider
+            pl.type = LightType.Point;
+            pl.color = lightColor;
+            pl.intensity = 6f;
+            pl.range = 22f;
+
+            // Trigger collider — depth runs through the gateway (local Z axis).
             BoxCollider bc = glowObj.GetComponent<BoxCollider>() ?? glowObj.AddComponent<BoxCollider>();
-            bc.isTrigger = true; bc.size = new Vector3(1.1f,1.1f,7f);
+            bc.isTrigger = true;
+            bc.size = new Vector3(5.4f, 5.2f, 4.5f);
+
             // Portal script
             var script = glowObj.AddComponent<JapanPortal>();
             script.destinationTarget = destination;
-            script.isReturnPortal    = isReturn;
-            // Particle vortex
+            script.isReturnPortal = isReturn;
+
+            // Particle vortex inside the gateway — drifts toward the approach side so
+            // it reads as "energy spilling out" rather than just floating dust.
             ParticleSystem ps = glowObj.AddComponent<ParticleSystem>();
             var pM = ps.main;
-            pM.startColor   = particleColor;
-            pM.startSize    = new ParticleSystem.MinMaxCurve(0.07f,0.35f);
-            pM.startLifetime= 5f;
-            pM.startSpeed   = 2.5f;
+            pM.startColor = particleColor;
+            pM.startSize = new ParticleSystem.MinMaxCurve(0.10f, 0.45f);
+            pM.startLifetime = 4.5f;
+            pM.startSpeed = 1.8f;
+            pM.simulationSpace = ParticleSystemSimulationSpace.Local;
             var emission = ps.emission;
-            emission.rateOverTime = 50;
-            var pSh = ps.shape; pSh.shapeType = ParticleSystemShapeType.Box; pSh.scale = new Vector3(4.5f,6.5f,1f);
+            emission.rateOverTime = 60f;
+            var pSh = ps.shape;
+            pSh.shapeType = ParticleSystemShapeType.Box;
+            pSh.scale = new Vector3(4.2f, 4.8f, 0.4f);
             glowObj.GetComponent<ParticleSystemRenderer>().sharedMaterial = new Material(Shader.Find("Sprites/Default"));
             var pV = ps.velocityOverLifetime;
             pV.enabled = true;
-            pV.x = new ParticleSystem.MinMaxCurve(-0.6f,0.6f);
-            pV.y = new ParticleSystem.MinMaxCurve(-0.61f,0.6f);
-            pV.z = new ParticleSystem.MinMaxCurve(-3.5f,-1.2f);
+            pV.x = new ParticleSystem.MinMaxCurve(-0.4f, 0.4f);
+            pV.y = new ParticleSystem.MinMaxCurve(-0.2f, 0.6f);
+            pV.z = new ParticleSystem.MinMaxCurve(-2.4f, -0.6f);
+            // Fade in/out for softer particles
+            var col = ps.colorOverLifetime;
+            col.enabled = true;
+            Gradient g = new Gradient();
+            g.SetKeys(
+                new[] { new GradientColorKey(particleColor, 0f), new GradientColorKey(particleColor, 1f) },
+                new[] { new GradientAlphaKey(0f, 0f), new GradientAlphaKey(0.85f, 0.3f), new GradientAlphaKey(0.6f, 0.7f), new GradientAlphaKey(0f, 1f) });
+            col.color = new ParticleSystem.MinMaxGradient(g);
+
+            // Slow swirl on the front face for extra "alive" feel
+            GameObject swirl = new GameObject("Portal Front Swirl");
+            swirl.transform.SetParent(group.transform, false);
+            swirl.transform.localPosition = new Vector3(0f, 3.0f, -0.3f);
+            ParticleSystem swirlPs = swirl.AddComponent<ParticleSystem>();
+            var sM = swirlPs.main;
+            sM.startColor = new Color(lightColor.r, lightColor.g, lightColor.b, 0.8f);
+            sM.startSize = new ParticleSystem.MinMaxCurve(0.18f, 0.45f);
+            sM.startLifetime = 3.5f;
+            sM.startSpeed = 0.4f;
+            sM.maxParticles = 80;
+            var sE = swirlPs.emission; sE.rateOverTime = 18f;
+            var sSh = swirlPs.shape; sSh.shapeType = ParticleSystemShapeType.Circle; sSh.radius = 2.4f;
+            swirl.GetComponent<ParticleSystemRenderer>().sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+
+            // Now apply the portal's facing rotation. Both portals face the approaching
+            // player so the glow plane is broadside-on, never sideways.
+            // Frostheim->Yamato portal: approach from south (player walks +Z), keep identity.
+            // Yamato->Frostheim portal: approach from south (player walks +Z), keep identity.
+            // The caller positions the portals so the player approaches from the -Z side.
+            return group;
         }
 
         private static void CreateSakuraTree(Vector3 pos, Transform parent,
@@ -2129,7 +3109,6 @@ namespace NordicWilds.EditorTools
 
             player.AddComponent<PlayerController>();
             player.AddComponent<Health>();
-            player.AddComponent<TemperatureSystem>();
 
             // Dash trail
             var trail = player.AddComponent<TrailRenderer>();
@@ -2189,6 +3168,9 @@ namespace NordicWilds.EditorTools
             cam.tag              = "MainCamera";
             cam.orthographic     = true;
             cam.orthographicSize = 12f;
+            cam.clearFlags       = CameraClearFlags.SolidColor;
+            cam.backgroundColor  = new Color(0.34f, 0.38f, 0.44f);
+            cam.allowHDR         = false;
             rig.AddComponent<CameraJuiceManager>();
 
             var iso = rig.AddComponent<IsometricCameraFollow>();
@@ -2230,6 +3212,43 @@ namespace NordicWilds.EditorTools
             new GameObject("MinimalHUDOverlay").AddComponent<MinimalHUD>();
         }
 
+        private static void CreateRegionMusicController(Transform parent)
+        {
+            GameObject music = new GameObject("Region Music Controller");
+            music.transform.SetParent(parent);
+
+            AudioSource source = music.AddComponent<AudioSource>();
+            source.loop = true;
+            source.playOnAwake = false;
+            source.spatialBlend = 0f;
+
+            RegionMusicController controller = music.AddComponent<RegionMusicController>();
+            controller.forestClip = FindBestMusicClip(new[] { "viking", "forest", "norse", "nordic" });
+            controller.yamatoClip = FindBestMusicClip(new[] { "japanese", "japan", "yamato", "shamisen", "sakura" });
+        }
+
+        private static AudioClip FindBestMusicClip(string[] keywords)
+        {
+            string[] guids = AssetDatabase.FindAssets("t:AudioClip");
+
+            foreach (string guid in guids)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                AudioClip clip = AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+                if (clip == null)
+                    continue;
+
+                string lower = (path + " " + clip.name).ToLowerInvariant();
+                foreach (string keyword in keywords)
+                {
+                    if (lower.Contains(keyword))
+                        return clip;
+                }
+            }
+
+            return null;
+        }
+
 
         // ╔══════════════════════════════════════════════════════════════════════════╗
         //  ENTITY HELPERS
@@ -2253,7 +3272,22 @@ namespace NordicWilds.EditorTools
                 new PhysicsMaterial { bounciness=0,staticFriction=0,dynamicFriction=0 };
         }
 
-        private static void CreateEnemy(string name, Vector3 pos,
+        private static void CreateNeutralNpc(string name, Vector3 pos, Material mat, Transform parent)
+        {
+            GameObject npc = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            npc.name = name;
+            npc.transform.position = pos;
+            npc.transform.localScale = new Vector3(0.9f, 1.05f, 0.9f);
+            npc.transform.SetParent(parent);
+            npc.GetComponent<MeshRenderer>().sharedMaterial = mat;
+
+            Rigidbody rb = npc.AddComponent<Rigidbody>();
+            rb.mass = 3f;
+            rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+            npc.AddComponent<RoamingAnimal>().moveSpeed = 1.2f;
+        }
+
+        private static GameObject CreateEnemy(string name, Vector3 pos,
             Material mat, Material hitFlash, Transform parent)
         {
             GameObject enemy = GameObject.CreatePrimitive(PrimitiveType.Capsule);
@@ -2275,6 +3309,8 @@ namespace NordicWilds.EditorTools
             Object.DestroyImmediate(weapon.GetComponent<BoxCollider>());
             weapon.GetComponent<Renderer>().sharedMaterial =
                 new Material(Shader.Find("Standard")){ color = new Color(0.15f,0.15f,0.18f) };
+
+            return enemy;
         }
 
 
@@ -2297,9 +3333,9 @@ namespace NordicWilds.EditorTools
         {
             Material m = new Material(Shader.Find("Standard"));
             m.enableInstancing = true;
-            if (tex != null) m.mainTexture = tex;
-            m.SetFloat("_Glossiness", glossiness);
-            m.color = Color.white;
+            m.mainTexture = null;
+            m.SetFloat("_Glossiness", Mathf.Clamp(glossiness, 0f, 0.55f));
+            m.color = tex != null ? tex.GetPixelBilinear(0.5f, 0.5f) : Color.white;
             return m;
         }
 
@@ -2326,6 +3362,20 @@ namespace NordicWilds.EditorTools
             return cube;
         }
 
+        private static GameObject CreateSceneryBlock(string name, Vector3 pos, Vector3 scale,
+            Material mat, Transform parent, Quaternion? rotation = null)
+        {
+            GameObject cube = CreateBlock(name, pos, scale, mat, parent);
+            if (rotation.HasValue)
+                cube.transform.rotation = rotation.Value;
+
+            Collider collider = cube.GetComponent<Collider>();
+            if (collider != null)
+                DestroyImmediate(collider);
+
+            return cube;
+        }
+
         private static void EnsureTagExists(string tag)
         {
             UnityEngine.Object[] asset = AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/TagManager.asset");
@@ -2342,17 +3392,11 @@ namespace NordicWilds.EditorTools
 
         private static Texture2D GenNoise(Color a, Color b, float scale)
         {
-            int sz = 256;
-            Texture2D tex = new Texture2D(sz,sz);
-            float ox = Random.Range(0f,9999f);
-            float oy = Random.Range(0f,9999f);
-            for (int x=0;x<sz;x++)
-                for (int y=0;y<sz;y++)
-                {
-                    float s = Mathf.Pow(Mathf.PerlinNoise(
-                        (float)x/sz*scale+ox, (float)y/sz*scale+oy), 1.6f);
-                    tex.SetPixel(x,y,Color.Lerp(a,b,s));
-                }
+            // Preserve the old material call sites while avoiding high-contrast texture maps.
+            Texture2D tex = new Texture2D(1,1);
+            tex.name = "Flat Material Swatch";
+            tex.hideFlags = HideFlags.HideAndDontSave;
+            tex.SetPixel(0,0,Color.Lerp(a,b,0.5f));
             tex.Apply();
             return tex;
         }
@@ -2360,21 +3404,66 @@ namespace NordicWilds.EditorTools
 
     private static void CreateGreatHall(Vector3 pos, Transform parent, Material wood, Material woodDark, Material thatch, Material stone, Material pathMat, Material bannerRed)
     {
-        // Placeholder implementation using provided materials.
-        // Build a basic hall structure.
-        CreateBlock("Great Hall Base", pos, new Vector3(20f, 6f, 20f), wood, parent);
+        GameObject hall = new GameObject("Viking Great Hall");
+        hall.transform.position = pos;
+        hall.transform.SetParent(parent);
+
+        CreateBlock("Longhouse Stone Footing", pos + new Vector3(0f, 0.32f, 0f), new Vector3(34f, 0.64f, 13f), stone, hall.transform);
+        CreateBlock("Longhouse Timber Wall North", pos + new Vector3(0f, 2.2f, 5.8f), new Vector3(32f, 3.8f, 0.7f), wood, hall.transform);
+        CreateBlock("Longhouse Timber Wall South", pos + new Vector3(0f, 2.2f, -5.8f), new Vector3(32f, 3.8f, 0.7f), wood, hall.transform);
+        CreateBlock("Longhouse West Gable", pos + new Vector3(-16f, 2.2f, 0f), new Vector3(0.7f, 3.8f, 12f), woodDark, hall.transform);
+        CreateBlock("Longhouse East Gable", pos + new Vector3(16f, 2.2f, 0f), new Vector3(0.7f, 3.8f, 12f), woodDark, hall.transform);
+
+        CreateBlock("Great Hall Door", pos + new Vector3(0f, 1.6f, -6.25f), new Vector3(3.8f, 3.0f, 0.32f), woodDark, hall.transform);
+        CreateBlock("Door Iron Bar", pos + new Vector3(0f, 2.2f, -6.45f), new Vector3(3.2f, 0.18f, 0.18f), stone, hall.transform);
+
+        GameObject roofLeft = CreateBlock("Turf Roof Left Plane", pos + new Vector3(-4.2f, 5.1f, 0f), new Vector3(20f, 0.7f, 15.5f), thatch, hall.transform);
+        roofLeft.transform.rotation = Quaternion.Euler(0f, 0f, 19f);
+        GameObject roofRight = CreateBlock("Turf Roof Right Plane", pos + new Vector3(4.2f, 5.1f, 0f), new Vector3(20f, 0.7f, 15.5f), thatch, hall.transform);
+        roofRight.transform.rotation = Quaternion.Euler(0f, 0f, -19f);
+        CreateBlock("Longhouse Ridge Beam", pos + new Vector3(0f, 7.8f, 0f), new Vector3(0.7f, 0.7f, 17f), woodDark, hall.transform);
+
+        for (int i = 0; i < 9; i++)
+        {
+            float x = -12f + i * 3f;
+            CreateBlock("Wall Post North " + i, pos + new Vector3(x, 2.7f, 6.25f), new Vector3(0.38f, 4.2f, 0.38f), woodDark, hall.transform);
+            CreateBlock("Wall Post South " + i, pos + new Vector3(x, 2.7f, -6.25f), new Vector3(0.38f, 4.2f, 0.38f), woodDark, hall.transform);
+        }
+
+        CreateBlock("Central Hearth", pos + new Vector3(0f, 0.82f, 0f), new Vector3(5f, 0.34f, 2.4f), stone, hall.transform);
+        Material ember = MakeMat(null, 0.20f); ember.color = new Color(1f, 0.34f, 0.08f);
+        CreateSceneryBlock("Hearth Embers", pos + new Vector3(0f, 1.06f, 0f), new Vector3(3.8f, 0.16f, 1.5f), ember, hall.transform);
+        AddPointLight(hall.transform, pos + new Vector3(0f, 2.1f, 0f), new Color(1f, 0.42f, 0.12f), 2.5f, 10f, "Great Hall Hearth Glow");
+
+        CreateBlock("Left Sleeping Bench", pos + new Vector3(-6f, 1.0f, 4.4f), new Vector3(14f, 0.45f, 1.2f), woodDark, hall.transform);
+        CreateBlock("Right Sleeping Bench", pos + new Vector3(6f, 1.0f, -4.4f), new Vector3(14f, 0.45f, 1.2f), woodDark, hall.transform);
+        CreateBlock("Hall Banner", pos + new Vector3(0f, 4.1f, -6.45f), new Vector3(3.2f, 3.8f, 0.18f), bannerRed, hall.transform);
+        CreateBlock("Stone Path to Hall", pos + new Vector3(0f, 0.08f, -13f), new Vector3(7f, 0.12f, 12f), pathMat, hall.transform);
     }
 
     private static void CreateHut(Vector3 pos, Transform parent, Material wood, Material thatch, Material stone, float rotation)
     {
-        GameObject hut = new GameObject("Nordic Hut");
+        GameObject hut = new GameObject("Nordic Family Hut");
         hut.transform.position = pos;
         hut.transform.rotation = Quaternion.Euler(0, rotation, 0);
         hut.transform.SetParent(parent);
-        // Basic walls
-        CreateBlock("Cabin Walls", pos + new Vector3(0, 1.5f, 0), new Vector3(5, 3, 5), wood, hut.transform);
-        // Simple roof using thatch material
-        CreateBlock("Roof", pos + new Vector3(0, 3.5f, 0), new Vector3(6, 0.5f, 6), thatch, hut.transform);
+
+        CreateBlock("Hut Stone Base", pos + new Vector3(0f, 0.24f, 0f), new Vector3(7.2f, 0.48f, 6.2f), stone, hut.transform);
+        CreateBlock("Hut Back Wall", pos + new Vector3(0f, 1.8f, 2.8f), new Vector3(6.6f, 3.2f, 0.52f), wood, hut.transform);
+        CreateBlock("Hut Front Wall L", pos + new Vector3(-2.4f, 1.8f, -2.8f), new Vector3(2.0f, 3.2f, 0.52f), wood, hut.transform);
+        CreateBlock("Hut Front Wall R", pos + new Vector3(2.4f, 1.8f, -2.8f), new Vector3(2.0f, 3.2f, 0.52f), wood, hut.transform);
+        CreateBlock("Hut Left Wall", pos + new Vector3(-3.3f, 1.8f, 0f), new Vector3(0.52f, 3.2f, 5.6f), wood, hut.transform);
+        CreateBlock("Hut Right Wall", pos + new Vector3(3.3f, 1.8f, 0f), new Vector3(0.52f, 3.2f, 5.6f), wood, hut.transform);
+        CreateBlock("Hut Door", pos + new Vector3(0f, 1.35f, -3.1f), new Vector3(1.8f, 2.5f, 0.32f), stone, hut.transform);
+
+        GameObject roofLeft = CreateBlock("Hut Turf Roof Left", pos + new Vector3(-1.9f, 4.2f, 0f), new Vector3(4.5f, 0.48f, 7.2f), thatch, hut.transform);
+        roofLeft.transform.rotation = Quaternion.Euler(0f, rotation, 24f);
+        GameObject roofRight = CreateBlock("Hut Turf Roof Right", pos + new Vector3(1.9f, 4.2f, 0f), new Vector3(4.5f, 0.48f, 7.2f), thatch, hut.transform);
+        roofRight.transform.rotation = Quaternion.Euler(0f, rotation, -24f);
+        CreateBlock("Hut Ridge Beam", pos + new Vector3(0f, 5.35f, 0f), new Vector3(0.42f, 0.42f, 7.4f), wood, hut.transform);
+
+        CreateBlock("Hut Small Bench", pos + new Vector3(-1.6f, 0.8f, 1.7f), new Vector3(2.2f, 0.28f, 0.8f), wood, hut.transform);
+        AddPointLight(hut.transform, pos + new Vector3(0f, 2.0f, -1.5f), new Color(1f, 0.48f, 0.16f), 0.9f, 5f, "Hut Warm Window");
     }
 
     private static void CreateTorch(Vector3 pos, Transform parent)
@@ -2423,52 +3512,112 @@ namespace NordicWilds.EditorTools
         CreateBlock("Butsudan Altar", pos, new Vector3(4f, 3f, 2f), a, parent);
     }
 
-    private static void CreateOceanMenuUI(Transform parent, GameObject player, Camera cam)
+        private static void CreateOceanMenuUI(Transform parent, GameObject player, Camera cam, Vector3 gameStartPos, Vector3 autoWalkTargetPos)
     {
         Vector3 oceanPos = new Vector3(20000f, 0f, 20000f);
-        
-        // 1. Ocean Plane
-        GameObject ocean = GameObject.CreatePrimitive(PrimitiveType.Plane);
-        ocean.name = "Ocean Menu Plane";
+
+        GameObject ocean = new GameObject("Cinematic Menu Ocean");
         ocean.transform.SetParent(parent);
         ocean.transform.position = oceanPos;
-        ocean.transform.localScale = new Vector3(80f, 1f, 80f);
-        Material waterMat = new Material(Shader.Find("Standard"));
-        waterMat.color = new Color(0.05f, 0.15f, 0.25f, 0.95f);
-        // Make it metallic/glossy for water look
-        waterMat.SetFloat("_Metallic", 0.1f);
-        waterMat.SetFloat("_Glossiness", 0.9f);
-        ocean.GetComponent<Renderer>().sharedMaterial = waterMat;
+        var oceanWater = ocean.AddComponent<OceanWater>();
+        oceanWater.size = 720f;
+        oceanWater.resolution = 120;                                  // higher mesh density -> finer waves
+        oceanWater.foamAmount = 0.46f;                                // a bit more whitewater
+        oceanWater.shallowColor = new Color(0.10f, 0.40f, 0.58f, 1f); // richer teal in the shallows
+        oceanWater.deepColor    = new Color(0.012f, 0.06f, 0.14f, 1f);// deeper blue offshore
+        oceanWater.smoothness = 0.96f;                                // glossier surface for sun glints
+        oceanWater.metallic = 0.05f;
+        ocean.GetComponent<MeshRenderer>().sharedMaterial = CreateMenuWaterMaterial();
 
-        // 2. The Boat
-        GameObject boat = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        boat.name = "Menu Boat";
+        Material dockWood = MakeMat(null, 0.18f);
+        dockWood.color = new Color(0.26f, 0.14f, 0.07f);
+        Material dockDarkWood = MakeMat(null, 0.12f);
+        dockDarkWood.color = new Color(0.12f, 0.07f, 0.04f);
+
+        CreateDock(oceanPos + new Vector3(0f, 0.2f, 54f), parent, dockWood, dockDarkWood);
+
+        GameObject boat = new GameObject("Menu Longship");
         boat.transform.SetParent(parent);
-        boat.transform.position = oceanPos + new Vector3(0, 0.25f, 0);
-        boat.transform.localScale = new Vector3(2.5f, 0.8f, 5f);
-        Material boatMat = new Material(Shader.Find("Standard"));
-        boatMat.color = new Color(0.18f, 0.1f, 0.05f);
-        boat.GetComponent<Renderer>().sharedMaterial = boatMat;
+        // Raise boat root so the hull rests above the water surface (was 0.18 -> partly submerged).
+        boat.transform.position = oceanPos + new Vector3(0f, 0.6f, 40f);
+        boat.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+        var boatBody = boat.AddComponent<Rigidbody>();
+        boatBody.isKinematic = true;
+        boatBody.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // Simple Mast
-        CreateBlock("Mast", oceanPos + new Vector3(0, 2f, 1f), new Vector3(0.2f, 4f, 0.2f), boatMat, boat.transform);
+        if (CreateCinematicShip(boat.transform) == null)
+            CreateFallbackLongship(boat.transform);
 
-        // 3. Setup Player on the Boat
-        player.transform.position = oceanPos + new Vector3(0, 1.5f, -1f);
-        player.transform.SetParent(boat.transform);
-        // Face forward
-        player.transform.rotation = Quaternion.Euler(0, 0, 0);
-        
-        // 4. Setup Camera View
-        if (cam != null && boat != null) {
+        var boatBobber = boat.AddComponent<BoatBobber>();
+        boatBobber.ocean = oceanWater;
+        boatBobber.vertOffsetFromSurface = 0.55f;
+        boatBobber.positionLerp = 2.4f;
+        boatBobber.rotationLerp = 1.85f;
+        boatBobber.maxRollDegrees = 3.6f;
+        boatBobber.maxPitchDegrees = 2.7f;
+        boatBobber.forwardSampleDistance = 7f;
+        boatBobber.sideSampleDistance = 3.2f;
+        boatBobber.lateralDriftAmplitude = 0.55f;
+        boatBobber.lateralDriftFrequency = 0.035f;
+        boatBobber.lateralDriftAxis = new Vector3(1f, 0f, 0.35f);
+
+        CreateMenuHero(boat.transform);
+
+        player.transform.SetParent(boat.transform, false);
+        player.transform.localPosition = new Vector3(0f, 1.35f, -1.7f);
+        player.transform.localRotation = Quaternion.Euler(0f, 160f, 0f);
+
+        GameObject menuSun = new GameObject("Menu Low Sun");
+        menuSun.transform.SetParent(parent);
+        menuSun.transform.rotation = Quaternion.Euler(13f, -42f, 0f);
+        Light sun = menuSun.AddComponent<Light>();
+        sun.type = LightType.Directional;
+        sun.color = new Color(1f, 0.62f, 0.34f);
+        sun.intensity = 1.15f;
+        sun.shadows = LightShadows.Soft;
+        sun.shadowStrength = 0.55f;
+
+        GameObject rimLight = new GameObject("Menu Sail Rim Light");
+        rimLight.transform.SetParent(boat.transform, false);
+        rimLight.transform.localPosition = new Vector3(-7f, 5f, -5f);
+        Light rim = rimLight.AddComponent<Light>();
+        rim.type = LightType.Point;
+        rim.color = new Color(0.55f, 0.78f, 1f);
+        rim.intensity = 1.4f;
+        rim.range = 20f;
+
+        GameObject seaMist = CreateMenuMist(parent, oceanPos);
+        ConfigureMenuLighting();
+
+        if (cam != null)
+        {
             var isoCam = cam.GetComponent<NordicWilds.CameraSystems.IsometricCameraFollow>();
-            if (isoCam != null) {
-                isoCam.target = boat.transform;
-                cam.transform.position = boat.transform.position + new Vector3(-12f, 16f, -12f);
-            }
+            if (isoCam != null)
+                isoCam.enabled = false;
+
+            cam.orthographic = false;
+            cam.fieldOfView = 38f;
+            cam.nearClipPlane = 0.08f;
+            cam.farClipPlane = 1100f;
+            cam.clearFlags = CameraClearFlags.SolidColor;
+            cam.backgroundColor = new Color(0.035f, 0.06f, 0.095f);
+            cam.allowHDR = false;
+
+            var director = cam.GetComponent<NordicWilds.UI.MenuCameraDirector>();
+            if (director == null)
+                director = cam.gameObject.AddComponent<NordicWilds.UI.MenuCameraDirector>();
+            director.target = boat.transform;
+            director.idleOffset = new Vector3(-23.5f, 9.7f, -29f);
+            director.idleEndOffset = new Vector3(-17.2f, 8.4f, -23f);
+            director.idleDriftSpeed = 0.045f;
+            director.idleSwayAmplitude = 0.42f;
+            director.lookHeightOffset = 3.0f;
+            director.launchPushInAmount = 9f;
+            director.launchAscend = 2.8f;
+            director.launchDuration = 3.0f;
+            director.SnapToIdle();
         }
 
-        // 5. Create UI Canvas Overlay
         GameObject canvasObj = new GameObject("MainMenuCanvas");
         canvasObj.transform.SetParent(parent);
         var canvas = canvasObj.AddComponent<Canvas>();
@@ -2476,6 +3625,7 @@ namespace NordicWilds.EditorTools
         var scaler = canvasObj.AddComponent<UnityEngine.UI.CanvasScaler>();
         scaler.uiScaleMode = UnityEngine.UI.CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = 0.5f;
         canvasObj.AddComponent<UnityEngine.UI.GraphicRaycaster>();
 
         if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
@@ -2486,70 +3636,466 @@ namespace NordicWilds.EditorTools
             evtSystem.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
         }
 
-        // Title
-        GameObject titleObj = new GameObject("TitleText");
-        titleObj.transform.SetParent(canvasObj.transform, false);
-        var titleTxt = titleObj.AddComponent<UnityEngine.UI.Text>();
-        titleTxt.text = "NORDIC WILDS\nYamato Awakening";
-        titleTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
-        titleTxt.fontSize = 80;
-        titleTxt.fontStyle = FontStyle.Bold;
-        titleTxt.alignment = TextAnchor.MiddleCenter;
-        titleTxt.color = Color.white;
-        var titleRect = titleObj.GetComponent<RectTransform>();
-        titleRect.anchorMin = new Vector2(0.5f, 0.7f);
-        titleRect.anchorMax = new Vector2(0.5f, 0.7f);
-        titleRect.sizeDelta = new Vector2(800, 200);
-        titleRect.anchoredPosition = Vector2.zero;
+        Font menuFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/ZombiSoft/TinyHealthSystem/Demo/Fonts/Pixelnauts.ttf")
+            ?? Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf")
+            ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
 
-        // Fader Panel
+        GameObject menuRoot = new GameObject("MenuRoot");
+        menuRoot.transform.SetParent(canvasObj.transform, false);
+        var menuRootRect = menuRoot.AddComponent<RectTransform>();
+        menuRootRect.anchorMin = Vector2.zero;
+        menuRootRect.anchorMax = Vector2.one;
+        menuRootRect.offsetMin = Vector2.zero;
+        menuRootRect.offsetMax = Vector2.zero;
+        var menuRootGroup = menuRoot.AddComponent<CanvasGroup>();
+
+        CanvasGroup titleGroup;
+        RectTransform titleRect;
+        CreateMenuTitle(menuRoot.transform, menuFont, out titleGroup, out titleRect);
+
+        GameObject promptObj = CreateMenuText(
+            "PromptText",
+            "THE TIDE WAITS",
+            menuRoot.transform,
+            menuFont,
+            28,
+            new Color(0.80f, 0.89f, 0.95f, 0.9f),
+            new Vector2(0.5f, 0.19f),
+            new Vector2(520f, 44f));
+        var promptGroup = promptObj.AddComponent<CanvasGroup>();
+        promptGroup.alpha = 0.88f;
+
+        GameObject buttons = new GameObject("MenuButtons");
+        buttons.transform.SetParent(menuRoot.transform, false);
+        var buttonsRect = buttons.AddComponent<RectTransform>();
+        buttonsRect.anchorMin = new Vector2(0.5f, 0.095f);
+        buttonsRect.anchorMax = new Vector2(0.5f, 0.095f);
+        buttonsRect.sizeDelta = new Vector2(780f, 74f);
+        buttonsRect.anchoredPosition = Vector2.zero;
+        var buttonsGroup = buttons.AddComponent<CanvasGroup>();
+
+        var startButton = CreateMenuButton("StartButton", "START GAME", buttons.transform, menuFont, new Vector2(-165f, 0f), new Vector2(290f, 64f));
+        var quitButton = CreateMenuButton("QuitButton", "QUIT", buttons.transform, menuFont, new Vector2(165f, 0f), new Vector2(190f, 58f));
+
         GameObject faderObj = new GameObject("FaderPanel");
         faderObj.transform.SetParent(canvasObj.transform, false);
         var faderImg = faderObj.AddComponent<UnityEngine.UI.Image>();
         faderImg.color = Color.black;
-        var faderRect = faderObj.GetComponent<RectTransform>();
-        faderRect.anchorMin = Vector2.zero;
-        faderRect.anchorMax = Vector2.one;
-        faderRect.offsetMin = Vector2.zero;
-        faderRect.offsetMax = Vector2.zero;
+        StretchRect(faderObj.GetComponent<RectTransform>());
         var faderGroup = faderObj.AddComponent<CanvasGroup>();
         faderGroup.alpha = 0f;
         faderGroup.blocksRaycasts = false;
+        faderObj.transform.SetAsLastSibling();
 
-        // Button
-        GameObject btnObj = new GameObject("StartButton");
-        btnObj.transform.SetParent(canvasObj.transform, false);
-        var btnImg = btnObj.AddComponent<UnityEngine.UI.Image>();
-        btnImg.color = new Color(0.6f, 0.1f, 0.1f);
-        var btn = btnObj.AddComponent<UnityEngine.UI.Button>();
-        var btnRect = btnObj.GetComponent<RectTransform>();
-        btnRect.anchorMin = new Vector2(0.5f, 0.3f);
-        btnRect.anchorMax = new Vector2(0.5f, 0.3f);
-        btnRect.sizeDelta = new Vector2(250, 60);
-        btnRect.anchoredPosition = Vector2.zero;
+        var titleAnimator = canvasObj.AddComponent<NordicWilds.UI.MenuTitleAnimator>();
+        titleAnimator.titleGroup = titleGroup;
+        titleAnimator.titleRect = titleRect;
+        titleAnimator.pressPromptGroup = promptGroup;
+        titleAnimator.buttonsGroup = buttonsGroup;
 
-        // Button Text
-        GameObject btnTextObj = new GameObject("BtnText");
-        btnTextObj.transform.SetParent(btnObj.transform, false);
-        var btnTxt = btnTextObj.AddComponent<UnityEngine.UI.Text>();
-        btnTxt.text = "START GAME";
-        btnTxt.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf") ?? Resources.GetBuiltinResource<Font>("Arial.ttf");
-        btnTxt.fontSize = 32;
-        btnTxt.fontStyle = FontStyle.Bold;
-        btnTxt.alignment = TextAnchor.MiddleCenter;
-        btnTxt.color = Color.white;
-        var btnTxtRect = btnTextObj.GetComponent<RectTransform>();
-        btnTxtRect.anchorMin = Vector2.zero;
-        btnTxtRect.anchorMax = Vector2.one;
-        btnTxtRect.offsetMin = Vector2.zero;
-        btnTxtRect.offsetMax = Vector2.zero;
-
-        // Attach controller
         var mmc = canvasObj.AddComponent<NordicWilds.UI.MainMenuController>();
         mmc.faderGroup = faderGroup;
         mmc.boat = boat;
         mmc.player = player.transform;
         mmc.mainCamera = cam;
+        mmc.gameStartPos = gameStartPos;
+        mmc.autoWalkFromBoatOnStart = true;
+        mmc.autoWalkTargetPos = autoWalkTargetPos;
+        mmc.autoWalkDuration = 4.0f;
+        mmc.startsInYamato = false;
+        mmc.cameraDirector = cam != null ? cam.GetComponent<NordicWilds.UI.MenuCameraDirector>() : null;
+        mmc.titleAnimator = titleAnimator;
+        mmc.menuRootGroup = menuRootGroup;
+        mmc.startButton = startButton;
+        mmc.quitButton = quitButton;
+        mmc.boatBobber = boatBobber;
+        mmc.menuOnlyObjects = new[] { ocean, menuSun, seaMist };
+        mmc.hidePlayerOnMenu = true;
+        mmc.boatSailDuration = 3.25f;
+        mmc.boatSailDistance = 31f;
+        mmc.fadeOutDuration = 1.45f;
+        mmc.menuUiFadeDuration = 0.45f;
+        mmc.blackHold = 0.55f;
+        mmc.fadeInDuration = 1.25f;
+    }
+
+    private static Material CreateMenuWaterMaterial()
+    {
+        Shader shader = Shader.Find("Standard");
+        Material mat = new Material(shader != null ? shader : Shader.Find("Diffuse"));
+        mat.name = "OceanMat_Menu_Cinematic";
+        mat.color = new Color(0.06f, 0.22f, 0.34f, 1f);
+        if (mat.HasProperty("_Metallic"))   mat.SetFloat("_Metallic", 0.05f);
+        if (mat.HasProperty("_Glossiness")) mat.SetFloat("_Glossiness", 0.96f);
+        // Subtle warm reflective tint so sunset light glints off crests instead of
+        // looking like flat painted plastic.
+        if (mat.HasProperty("_SpecColor"))  mat.SetColor("_SpecColor", new Color(1f, 0.78f, 0.55f));
+        if (mat.HasProperty("_EmissionColor"))
+        {
+            mat.EnableKeyword("_EMISSION");
+            mat.SetColor("_EmissionColor", new Color(0.02f, 0.05f, 0.08f));
+        }
+        return mat;
+    }
+
+    private static GameObject CreateCinematicShip(Transform parent)
+    {
+        GameObject source = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Imported/boat/source/ship.fbx");
+        if (source == null)
+            return null;
+
+        GameObject ship = PrefabUtility.InstantiatePrefab(source) as GameObject;
+        if (ship == null)
+            ship = Object.Instantiate(source);
+
+        ship.name = "Imported Viking Ship";
+        ship.transform.SetParent(parent, false);
+        ship.transform.localPosition = Vector3.zero;
+        ship.transform.localRotation = Quaternion.identity;
+        ship.transform.localScale = Vector3.one;
+
+        Renderer[] renderers = ship.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0)
+            return ship;
+
+        Bounds initial = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            initial.Encapsulate(renderers[i].bounds);
+        if (initial.size.x > initial.size.z)
+            ship.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
+
+        // Waterline lifted so the hull sits ON the surface, not partly submerged.
+        // (The previous -0.55 sank the hull bottom 0.55 below water and made the
+        // ship look flooded.)
+        FitShipToMenuScale(ship, 22f, 0.45f);
+        ApplyShipMenuMaterials(ship);
+        return ship;
+    }
+
+    private static void FitShipToMenuScale(GameObject ship, float targetLength, float waterline)
+    {
+        Renderer[] renderers = ship.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length == 0)
+            return;
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+
+        float length = Mathf.Max(bounds.size.x, bounds.size.z);
+        if (length > 0.001f)
+            ship.transform.localScale *= targetLength / length;
+
+        renderers = ship.GetComponentsInChildren<Renderer>(true);
+        bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+
+        Vector3 offset = ship.transform.position - bounds.center;
+        offset.y = ship.transform.parent.position.y + waterline - bounds.min.y;
+        ship.transform.position += offset;
+    }
+
+    private static void ApplyShipMenuMaterials(GameObject ship)
+    {
+        Material wood = MakeMat(null, 0.28f); wood.color = new Color(0.30f, 0.16f, 0.075f);
+        Material darkWood = MakeMat(null, 0.20f); darkWood.color = new Color(0.12f, 0.07f, 0.045f);
+        Material sail = MakeMat(null, 0.18f); sail.color = new Color(0.72f, 0.58f, 0.42f);
+        Material shield = MakeMat(null, 0.38f); shield.color = new Color(0.55f, 0.10f, 0.06f);
+        Material metal = MakeMat(null, 0.62f); metal.color = new Color(0.62f, 0.55f, 0.45f);
+        Material rope = MakeMat(null, 0.12f); rope.color = new Color(0.36f, 0.27f, 0.18f);
+
+        foreach (Renderer renderer in ship.GetComponentsInChildren<Renderer>(true))
+        {
+            Material[] mats = renderer.sharedMaterials;
+            for (int i = 0; i < mats.Length; i++)
+            {
+                string n = (renderer.name + " " + (mats[i] != null ? mats[i].name : "")).ToLowerInvariant();
+                if (n.Contains("sail"))
+                    mats[i] = sail;
+                else if (n.Contains("shield"))
+                    mats[i] = shield;
+                else if (n.Contains("metal") || n.Contains("bronze") || n.Contains("iron"))
+                    mats[i] = metal;
+                else if (n.Contains("rope"))
+                    mats[i] = rope;
+                else if (n.Contains("keel") || n.Contains("trim"))
+                    mats[i] = darkWood;
+                else
+                    mats[i] = wood;
+            }
+            renderer.sharedMaterials = mats;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+            renderer.receiveShadows = true;
+        }
+    }
+
+    private static GameObject CreateFallbackLongship(Transform parent)
+    {
+        GameObject root = new GameObject("Fallback Cinematic Longship");
+        root.transform.SetParent(parent, false);
+        Material wood = MakeMat(null, 0.24f); wood.color = new Color(0.26f, 0.13f, 0.06f);
+        Material sail = MakeMat(null, 0.16f); sail.color = new Color(0.74f, 0.57f, 0.42f);
+        CreateMenuHeroPart(root.transform, PrimitiveType.Cube, "Hull", new Vector3(0f, 0.1f, 0f), new Vector3(4.2f, 0.75f, 17f), wood);
+        CreateMenuHeroPart(root.transform, PrimitiveType.Cube, "Raised Bow", new Vector3(0f, 1.25f, 8.15f), new Vector3(2.3f, 2.2f, 0.38f), wood);
+        CreateMenuHeroPart(root.transform, PrimitiveType.Cube, "Raised Stern", new Vector3(0f, 1.05f, -8.15f), new Vector3(2.1f, 1.8f, 0.38f), wood);
+        CreateMenuHeroPart(root.transform, PrimitiveType.Cube, "Mast", new Vector3(0f, 3.1f, 1.2f), new Vector3(0.22f, 6.2f, 0.22f), wood);
+        CreateMenuHeroPart(root.transform, PrimitiveType.Cube, "Sail", new Vector3(0f, 3.5f, 1.2f), new Vector3(0.12f, 3.2f, 4.8f), sail);
+        return root;
+    }
+
+    private static void CreateMenuHero(Transform boat)
+    {
+        Material cloak = MakeMat(null, 0.22f); cloak.color = new Color(0.18f, 0.25f, 0.33f);
+        Material fur = MakeMat(null, 0.12f); fur.color = new Color(0.62f, 0.55f, 0.44f);
+        Material skin = MakeMat(null, 0.16f); skin.color = new Color(0.77f, 0.62f, 0.46f);
+        Material leather = MakeMat(null, 0.18f); leather.color = new Color(0.24f, 0.13f, 0.07f);
+        Material metal = MakeMat(null, 0.70f); metal.color = new Color(0.60f, 0.67f, 0.72f);
+
+        GameObject hero = new GameObject("Menu Protagonist On Rail");
+        hero.transform.SetParent(boat, false);
+        hero.transform.localPosition = new Vector3(2.25f, 0.95f, 4.7f);
+        hero.transform.localRotation = Quaternion.Euler(0f, -118f, 0f);
+
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Capsule, "Seated Body", new Vector3(0f, 0.62f, 0f), new Vector3(0.62f, 0.82f, 0.56f), cloak);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Sphere, "Head", new Vector3(0f, 1.38f, 0.03f), new Vector3(0.44f, 0.44f, 0.44f), skin);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Fur Collar", new Vector3(0f, 1.05f, 0f), new Vector3(0.92f, 0.18f, 0.72f), fur);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Left Arm Resting", new Vector3(-0.52f, 0.74f, 0.25f), new Vector3(0.18f, 0.18f, 0.88f), leather).transform.localRotation = Quaternion.Euler(13f, 0f, -17f);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Right Arm Resting", new Vector3(0.52f, 0.72f, 0.16f), new Vector3(0.18f, 0.18f, 0.78f), leather).transform.localRotation = Quaternion.Euler(-10f, 0f, 18f);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Left Boot Over Edge", new Vector3(-0.22f, 0.02f, 0.58f), new Vector3(0.24f, 0.24f, 1.02f), leather).transform.localRotation = Quaternion.Euler(34f, 0f, -5f);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Right Boot Over Edge", new Vector3(0.28f, 0.0f, 0.52f), new Vector3(0.24f, 0.24f, 0.92f), leather).transform.localRotation = Quaternion.Euler(26f, 0f, 7f);
+        CreateMenuHeroPart(hero.transform, PrimitiveType.Cube, "Axe Across Lap", new Vector3(0.05f, 0.62f, 0.35f), new Vector3(1.15f, 0.09f, 0.09f), metal).transform.localRotation = Quaternion.Euler(0f, 0f, -13f);
+    }
+
+    private static GameObject CreateMenuHeroPart(Transform parent, PrimitiveType primitive, string name, Vector3 localPos, Vector3 localScale, Material mat)
+    {
+        GameObject part = GameObject.CreatePrimitive(primitive);
+        part.name = name;
+        part.transform.SetParent(parent, false);
+        part.transform.localPosition = localPos;
+        part.transform.localScale = localScale;
+        Collider c = part.GetComponent<Collider>();
+        if (c != null) DestroyImmediate(c);
+        Renderer r = part.GetComponent<Renderer>();
+        if (r != null) r.sharedMaterial = mat;
+        return part;
+    }
+
+    private static GameObject CreateMenuMist(Transform parent, Vector3 oceanPos)
+    {
+        GameObject mistRoot = new GameObject("Menu Sea Mist");
+        mistRoot.transform.SetParent(parent);
+        mistRoot.transform.position = oceanPos + new Vector3(0f, 1.2f, 0f);
+
+        // ── Layer 1: dense LOW mist hugging the water surface (the bulk of the fog)
+        GameObject low = new GameObject("Mist Low Layer");
+        low.transform.SetParent(mistRoot.transform, false);
+        low.transform.localPosition = new Vector3(0f, -0.5f, 0f);
+        ConfigureMistLayer(low,
+            startLifetime: new Vector2(14f, 22f),
+            startSpeed: new Vector2(0.05f, 0.18f),
+            startSize: new Vector2(14f, 28f),
+            maxParticles: 600,
+            rateOverTime: 60f,
+            shape: new Vector3(160f, 1f, 160f),
+            colorStart: new Color(0.78f, 0.86f, 0.94f),
+            colorEnd: new Color(0.40f, 0.52f, 0.66f),
+            peakAlpha: 0.32f);
+
+        // ── Layer 2: drifting MID-height wisps that catch the sun
+        GameObject mid = new GameObject("Mist Mid Wisps");
+        mid.transform.SetParent(mistRoot.transform, false);
+        mid.transform.localPosition = new Vector3(0f, 3.5f, 0f);
+        ConfigureMistLayer(mid,
+            startLifetime: new Vector2(10f, 16f),
+            startSpeed: new Vector2(0.10f, 0.30f),
+            startSize: new Vector2(8f, 16f),
+            maxParticles: 280,
+            rateOverTime: 22f,
+            shape: new Vector3(150f, 1f, 150f),
+            colorStart: new Color(1f, 0.86f, 0.66f),       // warm sunset tint
+            colorEnd: new Color(0.50f, 0.58f, 0.66f),
+            peakAlpha: 0.22f);
+
+        // ── Layer 3: distant horizon haze — large slow puffs in the background
+        GameObject horizon = new GameObject("Mist Horizon Haze");
+        horizon.transform.SetParent(mistRoot.transform, false);
+        horizon.transform.localPosition = new Vector3(0f, 6f, 60f);
+        ConfigureMistLayer(horizon,
+            startLifetime: new Vector2(20f, 30f),
+            startSpeed: new Vector2(0.02f, 0.10f),
+            startSize: new Vector2(30f, 60f),
+            maxParticles: 80,
+            rateOverTime: 4f,
+            shape: new Vector3(280f, 1f, 60f),
+            colorStart: new Color(0.85f, 0.82f, 0.74f),
+            colorEnd: new Color(0.30f, 0.36f, 0.48f),
+            peakAlpha: 0.18f);
+
+        return mistRoot;
+    }
+
+    private static void ConfigureMistLayer(GameObject host,
+        Vector2 startLifetime, Vector2 startSpeed, Vector2 startSize,
+        int maxParticles, float rateOverTime, Vector3 shape,
+        Color colorStart, Color colorEnd, float peakAlpha)
+    {
+        ParticleSystem ps = host.AddComponent<ParticleSystem>();
+        var main = ps.main;
+        main.startLifetime = new ParticleSystem.MinMaxCurve(startLifetime.x, startLifetime.y);
+        main.startSpeed    = new ParticleSystem.MinMaxCurve(startSpeed.x, startSpeed.y);
+        main.startSize     = new ParticleSystem.MinMaxCurve(startSize.x, startSize.y);
+        main.maxParticles  = maxParticles;
+        main.simulationSpace = ParticleSystemSimulationSpace.World;
+        main.startRotation = new ParticleSystem.MinMaxCurve(0f, Mathf.PI * 2f);
+
+        var emission = ps.emission;
+        emission.rateOverTime = rateOverTime;
+
+        var sh = ps.shape;
+        sh.shapeType = ParticleSystemShapeType.Box;
+        sh.scale = shape;
+
+        var velocity = ps.velocityOverLifetime;
+        velocity.enabled = true;
+        velocity.x = new ParticleSystem.MinMaxCurve(-0.22f, 0.22f);
+        velocity.y = new ParticleSystem.MinMaxCurve(-0.04f, 0.06f);
+        velocity.z = new ParticleSystem.MinMaxCurve(-0.10f, 0.28f);
+
+        // Subtle rotation for wispy feel
+        var rot = ps.rotationOverLifetime;
+        rot.enabled = true;
+        rot.z = new ParticleSystem.MinMaxCurve(-0.18f, 0.18f);
+
+        // Drifting noise so the fog doesn't move in straight lines
+        var noise = ps.noise;
+        noise.enabled = true;
+        noise.strength = 0.22f;
+        noise.frequency = 0.18f;
+        noise.scrollSpeed = 0.12f;
+
+        var color = ps.colorOverLifetime;
+        color.enabled = true;
+        Gradient g = new Gradient();
+        g.SetKeys(
+            new[] { new GradientColorKey(colorStart, 0f), new GradientColorKey(colorEnd, 1f) },
+            new[] {
+                new GradientAlphaKey(0f, 0f),
+                new GradientAlphaKey(peakAlpha, 0.4f),
+                new GradientAlphaKey(peakAlpha * 0.6f, 0.75f),
+                new GradientAlphaKey(0f, 1f)
+            });
+        color.color = new ParticleSystem.MinMaxGradient(g);
+
+        var renderer = host.GetComponent<ParticleSystemRenderer>();
+        renderer.renderMode = ParticleSystemRenderMode.Billboard;
+        renderer.sharedMaterial = new Material(Shader.Find("Sprites/Default"));
+        renderer.sortingFudge = -2f; // sort behind nearby props
+    }
+
+    private static void ConfigureMenuLighting()
+    {
+        RenderSettings.skybox = null;
+        RenderSettings.fog = true;
+        RenderSettings.fogMode = FogMode.ExponentialSquared;
+        RenderSettings.fogDensity = 0.0048f;                              // softer falloff so distance reads
+        RenderSettings.fogColor = new Color(0.20f, 0.26f, 0.34f);         // warmer, blends with sunset
+        RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+        RenderSettings.ambientSkyColor = new Color(0.32f, 0.40f, 0.50f);
+        RenderSettings.ambientEquatorColor = new Color(0.28f, 0.30f, 0.34f);
+        RenderSettings.ambientGroundColor = new Color(0.06f, 0.07f, 0.10f);
+        RenderSettings.ambientIntensity = 0.85f;
+        RenderSettings.reflectionIntensity = 0.55f;
+    }
+
+    private static void CreateMenuTitle(Transform parent, Font font, out CanvasGroup group, out RectTransform rect)
+    {
+        GameObject titleObj = CreateMenuText(
+            "TitleText",
+            "SON OF VINLAND",
+            parent,
+            font,
+            118,
+            new Color(0.92f, 0.80f, 0.56f, 1f),
+            new Vector2(0.5f, 0.76f),
+            new Vector2(1260f, 160f));
+        rect = titleObj.GetComponent<RectTransform>();
+        group = titleObj.AddComponent<CanvasGroup>();
+
+        var outline = titleObj.AddComponent<UnityEngine.UI.Outline>();
+        outline.effectColor = new Color(0.08f, 0.10f, 0.12f, 0.95f);
+        outline.effectDistance = new Vector2(3f, -3f);
+
+        GameObject ruleTop = CreateMenuText("TitleRuleTop", "RAVEN-BLOOD  |  IRON SEA  |  HOMEWARD FIRE", parent, font, 24, new Color(0.68f, 0.78f, 0.86f, 0.88f), new Vector2(0.5f, 0.875f), new Vector2(980f, 38f));
+        GameObject ruleBottom = CreateMenuText("TitleRuleBottom", "A NORSE SAGA ON RESTLESS WATER", parent, font, 26, new Color(0.82f, 0.89f, 0.94f, 0.92f), new Vector2(0.5f, 0.655f), new Vector2(900f, 42f));
+        ruleTop.transform.SetSiblingIndex(titleObj.transform.GetSiblingIndex());
+        ruleBottom.transform.SetSiblingIndex(titleObj.transform.GetSiblingIndex() + 1);
+    }
+
+    private static GameObject CreateMenuText(string name, string text, Transform parent, Font font, int size, Color color, Vector2 anchor, Vector2 sizeDelta)
+    {
+        GameObject obj = new GameObject(name);
+        obj.transform.SetParent(parent, false);
+        var uiText = obj.AddComponent<UnityEngine.UI.Text>();
+        uiText.text = text;
+        uiText.font = font;
+        uiText.fontSize = size;
+        uiText.fontStyle = FontStyle.Bold;
+        uiText.alignment = TextAnchor.MiddleCenter;
+        uiText.horizontalOverflow = HorizontalWrapMode.Overflow;
+        uiText.verticalOverflow = VerticalWrapMode.Overflow;
+        uiText.color = color;
+        var shadow = obj.AddComponent<UnityEngine.UI.Shadow>();
+        shadow.effectColor = new Color(0f, 0f, 0f, 0.82f);
+        shadow.effectDistance = new Vector2(2.5f, -2.5f);
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = sizeDelta;
+        rect.anchoredPosition = Vector2.zero;
+        return obj;
+    }
+
+    private static UnityEngine.UI.Button CreateMenuButton(string name, string label, Transform parent, Font font, Vector2 pos, Vector2 size)
+    {
+        GameObject buttonObj = new GameObject(name);
+        buttonObj.transform.SetParent(parent, false);
+        var image = buttonObj.AddComponent<UnityEngine.UI.Image>();
+        image.color = new Color(0.10f, 0.13f, 0.15f, 0.78f);
+        var button = buttonObj.AddComponent<UnityEngine.UI.Button>();
+        button.transition = UnityEngine.UI.Selectable.Transition.ColorTint;
+        UnityEngine.UI.ColorBlock colors = button.colors;
+        colors.normalColor = new Color(0.12f, 0.16f, 0.18f, 0.86f);
+        colors.highlightedColor = new Color(0.58f, 0.40f, 0.19f, 0.94f);
+        colors.pressedColor = new Color(0.76f, 0.54f, 0.24f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        colors.disabledColor = new Color(0.08f, 0.08f, 0.08f, 0.45f);
+        colors.colorMultiplier = 1f;
+        colors.fadeDuration = 0.12f;
+        button.colors = colors;
+        buttonObj.AddComponent<NordicWilds.UI.MenuButtonAnimator>();
+
+        var outline = buttonObj.AddComponent<UnityEngine.UI.Outline>();
+        outline.effectColor = new Color(0.86f, 0.65f, 0.32f, 0.70f);
+        outline.effectDistance = new Vector2(2f, -2f);
+
+        RectTransform rect = buttonObj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+        rect.sizeDelta = size;
+        rect.anchoredPosition = pos;
+
+        GameObject textObj = CreateMenuText("Text", label, buttonObj.transform, font, name == "StartButton" ? 30 : 24, new Color(0.96f, 0.90f, 0.76f, 1f), new Vector2(0.5f, 0.5f), size);
+        StretchRect(textObj.GetComponent<RectTransform>());
+        return button;
+    }
+
+    private static void StretchRect(RectTransform rect)
+    {
+        rect.anchorMin = Vector2.zero;
+        rect.anchorMax = Vector2.one;
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
     }
 
 }
