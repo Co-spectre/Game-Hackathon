@@ -10,6 +10,8 @@ public class EnemyAI : MonoBehaviour, IDamageable
 {
     private enum State { Idle, Chase, Attack, Stagger, Dead }
     private State currentState = State.Idle;
+    public bool IsParryStaggered { get; private set; } = false;
+
 
     [Header("Stats")]
     [SerializeField] private float speed = 5f;
@@ -44,6 +46,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
         health = GetComponent<Health>();
 
         ProceduralCharacterVisual.Build(transform, CharacterVisualPreset.NordicEnemy);
+
 
         meshRenderer = FindVisibleRenderer();
         if (meshRenderer != null)
@@ -221,7 +224,12 @@ public class EnemyAI : MonoBehaviour, IDamageable
             meshRenderer.sharedMaterial = hitFlashMat;
 
         if (staggerRoutine != null)
+        {
             StopCoroutine(staggerRoutine);
+            // If we interrupted a parry stagger, clear the flag immediately
+            // so the bonus-damage window doesn't get stuck on forever.
+            IsParryStaggered = false;
+        }
 
         staggerRoutine = StartCoroutine(StaggerRoutine());
     }
@@ -255,6 +263,167 @@ public class EnemyAI : MonoBehaviour, IDamageable
             staggerRoutine = null;
         }
     }
+
+    /// <summary>
+    /// Called by Health.TriggerParry when the player executes a perfect parry.
+    /// Knocks the enemy to the ground and marks them as vulnerable for <paramref name="duration"/> seconds.
+    /// </summary>
+    public void ApplyParryStagger(float duration)
+    {
+        if (currentState == State.Dead) return;
+
+        // Stop only the current stagger coroutine — don't kill unrelated routines
+        if (staggerRoutine != null)
+        {
+            StopCoroutine(staggerRoutine);
+            IsParryStaggered = false; // clean up in case we're interrupting a prior parry
+        }
+
+        staggerRoutine = StartCoroutine(ParryStaggerRoutine(duration));
+    }
+
+    /// <summary>
+    /// Knockdown without opening the parry bonus-damage window.
+    /// Used by the player's finisher (3rd combo hit).
+    /// </summary>
+    public void ApplyKnockdown(float duration)
+    {
+        if (currentState == State.Dead) return;
+        if (staggerRoutine != null)
+        {
+            StopCoroutine(staggerRoutine);
+            IsParryStaggered = false;
+        }
+        staggerRoutine = StartCoroutine(KnockdownRoutine(duration));
+    }
+
+    private IEnumerator KnockdownRoutine(float duration)
+    {
+        currentState = State.Stagger;
+        if (rb != null) rb.linearVelocity = Vector3.zero;
+
+        Quaternion standingRot = transform.rotation;
+        Quaternion fallenRot   = standingRot * Quaternion.Euler(90f, 0f, 0f);
+
+        // Fall
+        float elapsed = 0f;
+        while (elapsed < 0.25f)
+        {
+            float e = 1f - Mathf.Pow(1f - elapsed / 0.25f, 3f);
+            transform.rotation = Quaternion.Slerp(standingRot, fallenRot, e);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = fallenRot;
+
+        yield return new WaitForSeconds(duration);
+
+        // Rise
+        elapsed = 0f;
+        while (elapsed < 0.3f)
+        {
+            float e = 1f - Mathf.Pow(1f - elapsed / 0.3f, 3f);
+            transform.rotation = Quaternion.Slerp(fallenRot, standingRot, e);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = standingRot;
+
+        staggerRoutine = null;
+        if (currentState != State.Dead) currentState = State.Chase;
+    }
+
+    private IEnumerator ParryStaggerRoutine(float duration)
+    {
+        IsParryStaggered = true;
+        currentState     = State.Stagger;
+
+        if (rb != null) rb.linearVelocity = Vector3.zero;
+
+        // ── Knockdown: rotate enemy to lie on ground ──────────────────────────
+        Quaternion standingRot = transform.rotation;
+        Quaternion fallenRot   = standingRot * Quaternion.Euler(90f, 0f, 0f);
+
+        float elapsed = 0f, fallTime = 0.25f;
+        while (elapsed < fallTime)
+        {
+            float eased = 1f - Mathf.Pow(1f - elapsed / fallTime, 3f);
+            transform.rotation = Quaternion.Slerp(standingRot, fallenRot, eased);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = fallenRot;
+
+        // Flash red while down (vulnerable visual)
+        if (meshRenderer != null && hitFlashMat != null)
+            meshRenderer.sharedMaterial = hitFlashMat;
+
+        // ── Wait vulnerable duration ──────────────────────────────────────────
+        yield return new WaitForSeconds(duration);
+
+        // ── Stand back up ─────────────────────────────────────────────────────
+        elapsed = 0f; float riseTime = 0.3f;
+        while (elapsed < riseTime)
+        {
+            float eased = 1f - Mathf.Pow(1f - elapsed / riseTime, 3f);
+            transform.rotation = Quaternion.Slerp(fallenRot, standingRot, eased);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = standingRot;
+
+        // Restore material
+        if (meshRenderer != null && defaultMaterial != null)
+            meshRenderer.sharedMaterial = defaultMaterial;
+
+        IsParryStaggered = false;
+        staggerRoutine   = null;
+
+        if (currentState != State.Dead)
+            currentState = State.Chase;
+    }
+
+    /// <summary>
+    /// Called by DeathScreen when the player respawns.
+    /// Restores full health and returns the enemy to its spawn position in Idle state.
+    /// </summary>
+    public void ResetEnemy()
+    {
+        // Stop any running coroutines (attacks, staggers)
+        StopAllCoroutines();
+        staggerRoutine = null;
+        IsParryStaggered = false;
+
+
+        // Restore position to spawn anchor
+        if (rb != null)
+        {
+            rb.linearVelocity  = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.position = spawnAnchor;
+        }
+        transform.position = spawnAnchor;
+        transform.rotation = Quaternion.identity;
+
+        // Restore material
+        if (meshRenderer != null && defaultMaterial != null)
+            meshRenderer.sharedMaterial = defaultMaterial;
+
+        // Restore state (this also resets health via Health component)
+        if (health != null)
+        {
+            // Use reflection-free approach: call ForceRespawn if it exists,
+            // otherwise just heal to full via Heal()
+            var forceRespawn = health.GetType().GetMethod("ForceRespawn");
+            if (forceRespawn != null)
+                forceRespawn.Invoke(health, new object[] { spawnAnchor });
+            else
+                health.Heal(9999f); // heal to full
+        }
+
+        currentState = State.Idle;
+    }
+
 
     private void RecoverFromFall()
     {
