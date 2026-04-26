@@ -34,6 +34,7 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private Transform playerTarget;
     private Rigidbody rb;
     private Health health;
+    private Animator anim;
     private float nextAttackTime;
     private Coroutine staggerRoutine;
     private Vector3 spawnAnchor;
@@ -42,13 +43,18 @@ public class EnemyAI : MonoBehaviour, IDamageable
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        if (rb != null)
+        {
+            rb.isKinematic = false; // Ensure they are not kinematic so they can move
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
         health = GetComponent<Health>();
 
-        ProceduralCharacterVisual.Build(transform, CharacterVisualPreset.NordicEnemy);
+        // Removed procedural generation so the user's custom goon model isn't covered by capsules
 
 
         meshRenderer = FindVisibleRenderer();
+        anim = GetComponentInChildren<Animator>();
         if (meshRenderer != null)
             defaultMaterial = meshRenderer.sharedMaterial;
 
@@ -112,6 +118,19 @@ public class EnemyAI : MonoBehaviour, IDamageable
             if (distance > attackRange)
                 currentState = State.Chase;
         }
+
+        // Set animator speed based on state
+        if (anim != null)
+        {
+            if (currentState == State.Chase)
+            {
+                anim.SetFloat("Speed", 1f);
+            }
+            else
+            {
+                anim.SetFloat("Speed", 0f);
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -132,11 +151,26 @@ public class EnemyAI : MonoBehaviour, IDamageable
             rb.AddForce(moveDirection * speed, ForceMode.Acceleration);
 
         rb.rotation = Quaternion.Slerp(rb.rotation, Quaternion.LookRotation(moveDirection), Time.fixedDeltaTime * 10f);
+
+        // Ground Snapping (The "Leaf" Fix) - Optimized to ignore self
+        if (Physics.Raycast(transform.position + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 10f))
+        {
+            // Only snap if we hit something that isn't us or our children
+            if (hit.collider.transform.root != transform.root)
+            {
+                Vector3 snappedPos = rb.position;
+                snappedPos.y = hit.point.y + 0.05f; 
+                rb.position = snappedPos;
+            }
+        }
     }
 
     private IEnumerator AttackRoutine()
     {
         nextAttackTime = Time.time + attackCooldown;
+
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim != null) anim.SetTrigger("Attack");
 
         transform.localScale += new Vector3(0.2f, 0.2f, 0.2f);
         yield return new WaitForSeconds(0.25f);

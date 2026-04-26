@@ -324,10 +324,11 @@ namespace NordicWilds.UI
 
             if (player != null)
             {
-                player.SetParent(null, worldPositionStays: false);
+                Vector3 menuWorldScale = player.lossyScale;
+                player.SetParent(null);
                 player.position = gameStartPos;
                 player.rotation = Quaternion.identity;
-                player.localScale = Vector3.one;
+                player.localScale = menuWorldScale;
 
                 // Sync the rigidbody to the new transform BEFORE re-enabling physics
                 // so gravity doesn't kick in mid-teleport and produce a visible fall.
@@ -452,8 +453,16 @@ namespace NordicWilds.UI
                     rb.angularVelocity = Vector3.zero;
                 }
 
+                // Play walking animation
+                var anim = player.GetComponentInChildren<Animator>();
+                if (anim != null) anim.SetFloat("Speed", 1f);
+
                 yield return null;
             }
+
+            // Stop walking animation
+            var finalAnim = player.GetComponentInChildren<Animator>();
+            if (finalAnim != null) finalAnim.SetFloat("Speed", 0f);
 
             player.position = end;
             player.rotation = targetRotation;

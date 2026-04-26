@@ -42,6 +42,11 @@ namespace NordicWilds.UI
         private Coroutine activeCutsceneRoutine;
         private RectTransform imageRect;
         private readonly List<Sprite> runtimeCreatedSprites = new List<Sprite>();
+        
+        [Header("Skip Settings")]
+        public float skipHoldTime = 1.0f;
+        private float currentSkipHold = 0f;
+        private Image skipProgressBar;
 
         public bool IsPlaying { get; private set; }
 
@@ -106,7 +111,7 @@ namespace NordicWilds.UI
                 entry.image = LoadSpriteOrTextureAsSprite(resourcesSpritePath);
 
             if (string.IsNullOrWhiteSpace(entry.sceneName))
-                entry.sceneName = "Start Game";
+                entry.sceneName = string.Empty; // No default text like "Start Game"
 
             entry.dialogueText = text ?? string.Empty;
             entry.duration = Mathf.Max(0.05f, duration);
@@ -236,8 +241,31 @@ namespace NordicWilds.UI
                 if (useKenBurns && imageRect != null)
                     imageRect.localScale = Vector3.one * Mathf.Lerp(zoomStart, zoomEnd, smooth);
 
+                // Skip Logic
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    currentSkipHold += Time.unscaledDeltaTime;
+                    if (currentSkipHold >= skipHoldTime)
+                    {
+                        elapsed = duration; // Skip to end
+                    }
+                }
+                else
+                {
+                    currentSkipHold = Mathf.MoveTowards(currentSkipHold, 0f, Time.unscaledDeltaTime * 2f);
+                }
+
+                if (skipProgressBar != null)
+                {
+                    skipProgressBar.fillAmount = currentSkipHold / skipHoldTime;
+                    skipProgressBar.transform.parent.gameObject.SetActive(currentSkipHold > 0.01f);
+                }
+
                 yield return null;
             }
+
+            currentSkipHold = 0f;
+            if (skipProgressBar != null) skipProgressBar.transform.parent.gameObject.SetActive(false);
 
             if (cutsceneOverlay != null)
                 cutsceneOverlay.SetActive(false);
@@ -380,7 +408,7 @@ namespace NordicWilds.UI
 
                 displayTitle = titleObj.AddComponent<TextMeshProUGUI>();
                 displayTitle.alignment = TextAlignmentOptions.Center;
-                displayTitle.fontSize = 30f;
+                displayTitle.fontSize = 42f;
                 displayTitle.color = new Color(0.98f, 0.91f, 0.72f, 1f);
                 displayTitle.fontStyle = FontStyles.Bold;
             }
@@ -395,9 +423,43 @@ namespace NordicWilds.UI
             bodyRect.offsetMax = Vector2.zero;
 
             displayText.alignment = TextAlignmentOptions.Center;
-            displayText.fontSize = 30f;
+            displayText.fontSize = 36f;
             displayText.color = Color.white;
+            displayText.fontStyle = FontStyles.Bold; // Thicker, bolder text
             displayText.enableWordWrapping = true;
+
+            EnsureSkipUI();
+        }
+
+        private void EnsureSkipUI()
+        {
+            if (skipProgressBar != null) return;
+
+            GameObject skipRoot = new GameObject("SkipUI");
+            skipRoot.transform.SetParent(cutsceneOverlay.transform, false);
+            RectTransform rootRect = skipRoot.AddComponent<RectTransform>();
+            rootRect.anchorMin = new Vector2(0.5f, 0.05f);
+            rootRect.anchorMax = new Vector2(0.5f, 0.05f);
+            rootRect.sizeDelta = new Vector2(200f, 10f);
+            rootRect.anchoredPosition = new Vector2(0f, 30f);
+
+            Image bg = skipRoot.AddComponent<Image>();
+            bg.color = new Color(0, 0, 0, 0.5f);
+
+            GameObject barObj = new GameObject("ProgressBar");
+            barObj.transform.SetParent(skipRoot.transform, false);
+            RectTransform barRect = barObj.AddComponent<RectTransform>();
+            barRect.anchorMin = Vector2.zero;
+            barRect.anchorMax = Vector2.one;
+            barRect.sizeDelta = Vector2.zero;
+
+            skipProgressBar = barObj.AddComponent<Image>();
+            skipProgressBar.color = new Color(0.93f, 0.78f, 0.43f, 1f);
+            skipProgressBar.type = Image.Type.Filled;
+            skipProgressBar.fillMethod = Image.FillMethod.Horizontal;
+            skipProgressBar.fillAmount = 0f;
+
+            skipRoot.SetActive(false);
         }
     }
 }

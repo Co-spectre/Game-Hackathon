@@ -407,6 +407,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15ede4324cc9c0b4d8c875b0ee46df5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxTemperature: 100
+  currentTemperature: 0
+  decayRate: 1.5
+  warmRate: 3.5
+  freezingThreshold: 25
+  breathSteam: {fileID: 0}
 --- !u!96 &3581541021023993351
 TrailRenderer:
   serializedVersion: 3

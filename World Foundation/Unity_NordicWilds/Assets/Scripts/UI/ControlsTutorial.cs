@@ -154,25 +154,25 @@ namespace NordicWilds.UI
             if (!attacked) remaining += "LMB attack";
             if (string.IsNullOrWhiteSpace(remaining)) return;
 
-            float w = 360f;
-            float h = 38f;
+            float w = 500f; // Slightly wider
+            float h = 80f;  // Much taller to prevent clipping
             float x = Screen.width - w - 24f;
             float y = Screen.height - h - 168f; // above the HUD bar
             GUI.DrawTexture(new Rect(x, y, w, h), bgTex);
-            GUI.Label(new Rect(x + 12f, y + 8f, w - 24f, 24f), "Try: " + remaining, hintStyle);
+            GUI.Label(new Rect(x + 18f, y + 10f, w - 36f, 60f), "Try: " + remaining, hintStyle);
         }
 
         private void EnsureStyles()
         {
             if (titleStyle != null) return;
 
-            bgTex = MakeTex(new Color(0.04f, 0.03f, 0.03f, 0.82f));
+            bgTex = MakeTex(new Color(0.04f, 0.03f, 0.03f, 0.95f)); // More solid background
             keyCapTex = MakeTex(new Color(0.16f, 0.13f, 0.10f, 0.95f));
             keyCapDoneTex = MakeTex(new Color(0.18f, 0.32f, 0.18f, 0.95f));
 
             titleStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 16,
+                fontSize = 22,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter
             };
@@ -180,7 +180,7 @@ namespace NordicWilds.UI
 
             keyStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 18,
+                fontSize = 24,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter
             };
@@ -188,7 +188,8 @@ namespace NordicWilds.UI
 
             labelStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 14,
+                fontSize = 20,
+                fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter
             };
             labelStyle.normal.textColor = new Color(0.88f, 0.84f, 0.74f, 1f);
@@ -203,8 +204,10 @@ namespace NordicWilds.UI
 
             hintStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 14,
-                alignment = TextAnchor.MiddleLeft
+                fontSize = 20,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleLeft,
+                wordWrap = true // Allow multi-line if needed
             };
             hintStyle.normal.textColor = new Color(0.96f, 0.86f, 0.52f, 1f);
         }

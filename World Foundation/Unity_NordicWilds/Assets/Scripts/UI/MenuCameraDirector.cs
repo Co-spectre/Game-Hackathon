@@ -31,7 +31,7 @@ namespace NordicWilds.UI
             SnapToIdle();
         }
 
-        void Update()
+        void LateUpdate()
         {
             if (target == null) return;
 

@@ -33,38 +33,37 @@ namespace NordicWilds.World
                 playerController.SetControlsLocked(true);
             }
 
-            // Optional: Freeze player input here
-
-            // If we have a juice manager, shake camera or add a flash
             if (CameraJuiceManager.Instance != null)
             {
                 CameraJuiceManager.Instance.ShakeCamera(0.5f, 0.5f);
             }
 
-            yield return new WaitForSeconds(teleportDelay); // Dramatize the build up!
+            yield return new WaitForSeconds(teleportDelay);
 
-            // Force Physics Engine to acknowledge the massive distance change
             Rigidbody pRb = player.GetComponent<Rigidbody>();
-            if (pRb != null) 
+            if (pRb != null)
             {
-                pRb.linearVelocity = Vector3.zero; // cancel momentum
+                pRb.linearVelocity = Vector3.zero;
                 pRb.position = destinationTarget;
             }
+
             player.position = destinationTarget;
 
             Health playerHealth = player.GetComponent<Health>();
             if (playerHealth != null)
+            {
                 playerHealth.SetRespawnPoint(destinationTarget);
+            }
 
-            // Instantly Snap the Camera so it doesn't slowly pan 10,000 units across the void!
             if (Camera.main != null)
             {
                 var camScript = Camera.main.GetComponent<IsometricCameraFollow>();
-                if (camScript != null) camScript.SnapToTarget();
+                if (camScript != null)
+                {
+                    camScript.SnapToTarget();
+                }
             }
 
-            // Change Environment lighting based on destination — both palettes are
-            // sunset / low-contrast variants of the same dusk mood, just hue-shifted.
             RenderSettings.skybox = null;
             RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
             RenderSettings.ambientIntensity = 0.85f;
@@ -77,9 +76,9 @@ namespace NordicWilds.World
                 // Frostheim — cool dusk
                 RenderSettings.fogDensity = 0.020f;
                 RenderSettings.fogColor = new Color(0.36f, 0.28f, 0.32f);
-                RenderSettings.ambientSkyColor     = new Color(0.42f, 0.34f, 0.34f);
+                RenderSettings.ambientSkyColor = new Color(0.42f, 0.34f, 0.34f);
                 RenderSettings.ambientEquatorColor = new Color(0.32f, 0.28f, 0.32f);
-                RenderSettings.ambientGroundColor  = new Color(0.20f, 0.22f, 0.28f);
+                RenderSettings.ambientGroundColor = new Color(0.20f, 0.22f, 0.28f);
 
                 if (Camera.main != null)
                 {
@@ -97,15 +96,20 @@ namespace NordicWilds.World
                     dirLight.shadows = LightShadows.Soft;
                     dirLight.shadowStrength = 0.45f;
                 }
+
+                MissionTracker.Set(
+                    "Chapter 8: Return to Frostheim",
+                    "Defend the village. The raiders have come."
+                );
             }
             else
             {
                 // Yamato — warm dusk
                 RenderSettings.fogDensity = 0.013f;
                 RenderSettings.fogColor = new Color(0.46f, 0.30f, 0.32f);
-                RenderSettings.ambientSkyColor     = new Color(0.50f, 0.36f, 0.34f);
+                RenderSettings.ambientSkyColor = new Color(0.50f, 0.36f, 0.34f);
                 RenderSettings.ambientEquatorColor = new Color(0.38f, 0.30f, 0.32f);
-                RenderSettings.ambientGroundColor  = new Color(0.22f, 0.20f, 0.28f);
+                RenderSettings.ambientGroundColor = new Color(0.22f, 0.20f, 0.28f);
 
                 if (Camera.main != null)
                 {
@@ -128,17 +132,16 @@ namespace NordicWilds.World
                 {
                     new GameObject("YamatoArrivalDialogue").AddComponent<YamatoArrivalDialogue>();
                 }
+
                 if (Object.FindFirstObjectByType<WorldMapOverlay>() == null)
                 {
                     new GameObject("WorldMapOverlay").AddComponent<WorldMapOverlay>();
                 }
-                MissionTracker.Set("Chapter 7: Yamato",
-                    "Explore the village and find the return portal beyond the shrine.");
-            }
-            else
-            {
-                MissionTracker.Set("Chapter 8: Return to Frostheim",
-                    "Defend the village. The raiders have come.");
+
+                MissionTracker.Set(
+                    "Chapter 7: Yamato",
+                    "Explore the village and find the return portal beyond the shrine."
+                );
             }
 
             yield return new WaitForSeconds(0.2f);

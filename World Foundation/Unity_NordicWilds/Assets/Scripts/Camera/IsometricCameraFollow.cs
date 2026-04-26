@@ -41,9 +41,13 @@ namespace NordicWilds.CameraSystems
         public void SnapToTarget()
         {
             if (target == null) return;
+            Debug.Log($"[Camera] Snapping instantly to {target.name} at {target.position}");
+            
+            // Force the internal state to the target immediately
             currentActualPosition = target.position + followOffset;
             transform.position    = currentActualPosition;
             _smoothVelocity       = Vector3.zero;
+            _playerWasMoving      = false;
 
             if (lookAtTarget) transform.LookAt(target);
             else              transform.rotation = Quaternion.LookRotation(-followOffset);
@@ -69,6 +73,13 @@ namespace NordicWilds.CameraSystems
 
             // Use a tighter smooth time while catching up, looser while settling
             float smoothTime = playerMoving ? followSmoothTime : stopSmoothTime;
+
+            // Safety: If we are extremely far away (teleported), jump instantly
+            if ((desiredPosition - currentActualPosition).sqrMagnitude > 2500f) // 50 * 50
+            {
+                SnapToTarget();
+                return;
+            }
 
             // SmoothDamp gives natural ease-in / ease-out automatically
             // (unlike Lerp, it remembers velocity so it can't stutter or snap)

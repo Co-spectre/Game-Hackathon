@@ -50,6 +50,10 @@ namespace NordicWilds.World
         public float yamatoBoatLandingDuration = 3.25f;
         public float yamatoWalkOffBoatDuration = 2.35f;
         public float protectorSpawnRadius = 6.25f;
+        public float leafHeightOffset = 0f; // Adjust this if she sinks or flies
+        public float leafScale = 1.0f;     // Force her scale to this value
+        public float bossSpeed = 4.5f;     // Adjustable boss movement speed
+        private float lastLeafGroundY;     // Optimized caching
 
         [Header("Cutscene Indices")]
         public int leafMeetCutsceneIndex = 1;
@@ -226,6 +230,27 @@ namespace NordicWilds.World
             StartCoroutine(BoatJourneyRoutine(boat));
         }
 
+        [ContextMenu("Skip To Goons")]
+        public void DebugSkipToPanic()
+        {
+            if (state == QuestState.Panic || state == QuestState.Combat || state == QuestState.Complete) return;
+
+            // Mark all artifacts as collected to avoid visual glitches
+            if (artifacts != null)
+            {
+                foreach (var a in artifacts)
+                {
+                    if (a != null && !a.IsCollected) a.MarkCollected();
+                }
+            }
+
+            collectedArtifacts = 3;
+            StopAllCoroutines(); // Stop any pending story dialogue or cutscenes
+            
+            StartCoroutine(FinalArtifactAndPanicRoutine());
+            Debug.Log("Fast-forwarding to Goon ambush!");
+        }
+
         private IEnumerator WaitForLandingRoutine()
         {
             while (Object.FindFirstObjectByType<MainMenuController>() != null
@@ -243,7 +268,7 @@ namespace NordicWilds.World
                     }
                 }
 
-                yield return null;
+                yield return new WaitForSeconds(0.1f);
             }
 
             state = QuestState.Intro;
@@ -489,7 +514,7 @@ namespace NordicWilds.World
             EnemyAI ai = finalBoss.GetComponent<EnemyAI>();
             if (ai != null)
             {
-                ai.SetAggression(8.4f, 260f, 2.8f);
+                ai.SetAggression(bossSpeed, 260f, 2.8f);
                 ai.RushPlayer();
             }
         }
@@ -568,7 +593,20 @@ namespace NordicWilds.World
                 yield return null;
             }
 
-            // Show the transition image after the departure animation and before the player gets off the boat.
+            // NEW: Teleport and change lighting IMMEDIATELY while the screen is black (fadeAlpha = 1)
+            // This hides the "vanishing map" effect.
+            ApplyYamatoLighting();
+            
+            RegionMusicController music = RegionMusicController.Instance;
+            if (music != null)
+                music.PlayYamato();
+
+            if (boatTransform != null)
+                PlaceBoatAtYamatoApproach(boatTransform);
+            else
+                TeleportPlayerToYamatoBoatLanding();
+
+            // Now show the transition image while the player is already at the new location
             CutsceneManager manager = CutsceneManager.GetOrCreate();
             if (manager != null)
             {
@@ -583,16 +621,6 @@ namespace NordicWilds.World
                 if (manager.HasCutscene(departureCutsceneIndex))
                     yield return manager.PlayCutsceneAndWait(departureCutsceneIndex);
             }
-
-            ApplyYamatoLighting();
-            RegionMusicController music = RegionMusicController.Instance;
-            if (music != null)
-                music.PlayYamato();
-
-            if (boatTransform != null)
-                PlaceBoatAtYamatoApproach(boatTransform);
-            else
-                TeleportPlayerToYamatoBoatLanding();
 
             yield return new WaitForSeconds(0.35f);
 
@@ -644,7 +672,11 @@ namespace NordicWilds.World
             passenger.position = pos;
             passenger.rotation = boatTransform.rotation;
 
-            Rigidbody body = passenger.GetComponent<Rigidbody>();
+            passenger.position = pos;
+            passenger.rotation = boatTransform.rotation;
+
+            // Optimized: Use the class-cached Rigidbody if it's the player, otherwise get it once
+            Rigidbody body = (passenger == player) ? playerBody : passenger.GetComponent<Rigidbody>();
             if (body != null)
             {
                 body.position = pos;
@@ -676,7 +708,6 @@ namespace NordicWilds.World
                 IsometricCameraFollow follow = Camera.main.GetComponent<IsometricCameraFollow>();
                 if (follow != null)
                 {
-                    follow.enabled = true;
                     follow.target = player;
                     follow.SnapToTarget();
                 }
@@ -701,10 +732,11 @@ namespace NordicWilds.World
                 : boatTransform.rotation;
 
             float t = 0f;
-            while (t < yamatoBoatLandingDuration)
+            float duration = Mathf.Max(0.1f, yamatoBoatLandingDuration);
+            while (t < duration)
             {
                 t += Time.deltaTime;
-                float k = Mathf.Clamp01(t / Mathf.Max(0.01f, yamatoBoatLandingDuration));
+                float k = Mathf.Clamp01(t / duration);
                 float ease = k * k * (3f - 2f * k);
                 boatTransform.position = Vector3.Lerp(start, end, ease);
                 boatTransform.rotation = Quaternion.Slerp(boatTransform.rotation, targetRotation, Time.deltaTime * 5f);
@@ -748,7 +780,6 @@ namespace NordicWilds.World
                 IsometricCameraFollow follow = Camera.main.GetComponent<IsometricCameraFollow>();
                 if (follow != null)
                 {
-                    follow.enabled = true;
                     follow.target = player;
                     follow.SnapToTarget();
                 }
@@ -859,14 +890,50 @@ namespace NordicWilds.World
 
         private void FollowPlayerWithLeaf()
         {
+            if (leaf == null) return;
+            
+            // Force Scale and Physics State
+            leaf.localScale = Vector3.one * leafScale;
+            Rigidbody leafRb = leaf.GetComponent<Rigidbody>();
+            if (leafRb != null) leafRb.isKinematic = true;
+
             Vector3 target = player.position - player.forward * leafFollowDistance + player.right * 1.35f;
-            target.y = Mathf.Max(1f, player.position.y);
+            
+            // Raycast to find actual ground height for Leaf (Optimized: only raycast every 3 frames)
+            if (Time.frameCount % 3 == 0)
+            {
+                if (Physics.Raycast(target + Vector3.up * 5f, Vector3.down, out RaycastHit hit, 10f))
+                {
+                    lastLeafGroundY = hit.point.y + leafHeightOffset;
+                }
+                else
+                {
+                    lastLeafGroundY = player.position.y + leafHeightOffset;
+                }
+            }
+            target.y = lastLeafGroundY;
+            
+            float dist = Vector3.Distance(leaf.position, target);
             leaf.position = Vector3.Lerp(leaf.position, target, Time.deltaTime * leafFollowSpeed);
 
             Vector3 look = player.position - leaf.position;
             look.y = 0f;
             if (look.sqrMagnitude > 0.05f)
                 leaf.rotation = Quaternion.Slerp(leaf.rotation, Quaternion.LookRotation(look), Time.deltaTime * 9f);
+
+            // Play walk animation if moving
+            Animator anim = leaf.GetComponentInChildren<Animator>();
+            if (anim != null)
+            {
+                bool isMoving = dist > 0.15f;
+                // Set both common param names just in case
+                foreach (var p in anim.parameters)
+                {
+                    if (p.name == "Speed") anim.SetFloat("Speed", isMoving ? 1f : 0f);
+                    if (p.name == "Walking") anim.SetBool("Walking", isMoving);
+                    if (p.name == "isWalking") anim.SetBool("isWalking", isMoving);
+                }
+            }
         }
 
         private IEnumerator ShowLine(string who, string line)
@@ -1021,10 +1088,10 @@ namespace NordicWilds.World
         private void DrawSpeakerPanel(Rect rect)
         {
             GUI.DrawTexture(rect, speakerTex);
-            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, 2f), borderTex);
-            GUI.DrawTexture(new Rect(rect.x, rect.yMax - 2f, rect.width, 2f), borderTex);
-            GUI.DrawTexture(new Rect(rect.x, rect.y, 2f, rect.height), borderTex);
-            GUI.DrawTexture(new Rect(rect.xMax - 2f, rect.y, 2f, rect.height), borderTex);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, rect.width, 4f), borderTex);
+            GUI.DrawTexture(new Rect(rect.x, rect.yMax - 4f, rect.width, 4f), borderTex);
+            GUI.DrawTexture(new Rect(rect.x, rect.y, 4f, rect.height), borderTex);
+            GUI.DrawTexture(new Rect(rect.xMax - 4f, rect.y, 4f, rect.height), borderTex);
         }
 
         private void EnsureStyles()
@@ -1032,13 +1099,13 @@ namespace NordicWilds.World
             if (dialogueStyle != null)
                 return;
 
-            darkTex = MakeTex(new Color(0.04f, 0.025f, 0.015f, 0.88f));
-            borderTex = MakeTex(new Color(0.86f, 0.64f, 0.28f, 0.95f));
-            speakerTex = MakeTex(new Color(0.12f, 0.075f, 0.035f, 0.96f));
+            darkTex = MakeTex(new Color(0.04f, 0.025f, 0.015f, 0.96f)); // More opaque
+            borderTex = MakeTex(new Color(0.86f, 0.64f, 0.28f, 0.98f)); // Thicker color
+            speakerTex = MakeTex(new Color(0.12f, 0.075f, 0.035f, 0.98f));
 
             speakerStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 18,
+                fontSize = 24,
                 fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleLeft
             };
@@ -1046,7 +1113,8 @@ namespace NordicWilds.World
 
             dialogueStyle = new GUIStyle(GUI.skin.label)
             {
-                fontSize = 22,
+                fontSize = 28,
+                fontStyle = FontStyle.Bold,
                 wordWrap = true,
                 alignment = TextAnchor.UpperLeft
             };
@@ -1063,7 +1131,7 @@ namespace NordicWilds.World
             objectiveStyle = new GUIStyle(hintStyle)
             {
                 alignment = TextAnchor.MiddleLeft,
-                fontSize = 18
+                fontSize = 22
             };
 
             revealTitleStyle = new GUIStyle(speakerStyle)

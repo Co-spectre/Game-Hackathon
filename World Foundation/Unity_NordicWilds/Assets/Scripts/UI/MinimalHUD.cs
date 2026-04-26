@@ -64,10 +64,10 @@ public class MinimalHUD : MonoBehaviour
     {
         if (labelStyle == null) InitStyles();
 
-        float barW = 220f;
-        float barH = 18f;
-        float x    = 20f;
-        float y    = Screen.height - 80f;
+        float barW = 350f; // Wider
+        float barH = 28f;  // Thicker
+        float x    = 30f;
+        float y    = Screen.height - 110f; // Higher up to account for thickness
 
         // Health bar
         DrawBar(new Rect(x, y, barW, barH), currentHealth, healthFillTex, new Color(0.6f, 0f, 0f));
@@ -122,10 +122,10 @@ public class MinimalHUD : MonoBehaviour
     {
         labelStyle = new GUIStyle()
         {
-            fontSize  = 14,
+            fontSize  = 24, // Bigger
             fontStyle = FontStyle.Bold,
         };
-        labelStyle.normal.textColor = new Color(0.9f, 0.9f, 0.9f, 0.9f);
+        labelStyle.normal.textColor = new Color(0.95f, 0.95f, 0.95f, 1.0f); // Higher contrast
     }
 
     private void BuildTextures()
@@ -146,8 +146,8 @@ public class MinimalHUD : MonoBehaviour
         panelTex = MakeTex(2, 2, new Color(0.04f, 0.04f, 0.08f, 0.72f));
 
         // Shared utility textures
-        bgTex   = MakeTex(2, 2, new Color(0.1f, 0.1f, 0.1f, 0.8f));
-        darkTex = MakeTex(2, 2, new Color(0f, 0f, 0f, 0.9f));
+        bgTex   = MakeTex(2, 2, new Color(0.08f, 0.08f, 0.08f, 0.95f));
+        darkTex = MakeTex(2, 2, new Color(0f, 0f, 0f, 0.98f));
     }
 
     private Texture2D MakeTex(int w, int h, Color c)

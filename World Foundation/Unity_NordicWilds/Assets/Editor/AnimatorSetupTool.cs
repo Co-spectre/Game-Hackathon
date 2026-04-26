@@ -61,6 +61,9 @@ public class AnimatorSetupTool
         AnimatorState heavyAttackState = rootStateMachine.AddState("HeavyAttack");
         heavyAttackState.motion = heavyAttackClip;
 
+        AnimatorState jumpState = rootStateMachine.AddState("Jump");
+        jumpState.motion = idleClip; // Fallback since no jump clip exists yet
+
         // Set default state
         rootStateMachine.defaultState = idleState;
 
@@ -87,6 +90,16 @@ public class AnimatorSetupTool
         sprintToWalk.hasExitTime = false;
         sprintToWalk.AddCondition(AnimatorConditionMode.IfNot, 0f, "IsSprinting");
         sprintToWalk.AddCondition(AnimatorConditionMode.Greater, 0.1f, "Speed");
+
+        // Any State -> Jump
+        var anyToJump = rootStateMachine.AddAnyStateTransition(jumpState);
+        anyToJump.hasExitTime = false;
+        anyToJump.AddCondition(AnimatorConditionMode.IfNot, 0f, "IsGrounded");
+
+        // Jump -> Idle
+        var jumpToIdle = jumpState.AddTransition(idleState);
+        jumpToIdle.hasExitTime = false;
+        jumpToIdle.AddCondition(AnimatorConditionMode.If, 0f, "IsGrounded");
 
         // Any State -> Attack
         var anyToAttack = rootStateMachine.AddAnyStateTransition(attackState);
