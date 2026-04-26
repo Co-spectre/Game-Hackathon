@@ -24,11 +24,11 @@ namespace NordicWilds.Combat
 
         [Header("Combo Timing")]
         [Tooltip("Seconds after swing starts before the hitbox fires (swing-to-hit delay).")]
-        [SerializeField] private float hitDelayNormal   = 0.18f;  // swing travels → hit registers
-        [SerializeField] private float hitDelayFinisher = 0.28f;  // spin is slower → longer delay
+        [SerializeField] private float hitDelayNormal   = 1.10f;  // swing travels → hit registers
+        [SerializeField] private float hitDelayFinisher = 1.10f;  // spin is slower → longer delay
         [Tooltip("Total cooldown between attacks (includes wind-up + follow-through).")]
-        [SerializeField] private float cooldownNormal    = 0.55f;
-        [SerializeField] private float cooldownFinisher  = 0.80f;
+        [SerializeField] private float cooldownNormal    = 1.40f;
+        [SerializeField] private float cooldownFinisher  = 1.50f;
         [Tooltip("Window in seconds where a new combo hit is still valid after last attack.")]
         [SerializeField] private float comboResetDelay  = 0.85f;
         [Tooltip("Input buffer — how early you can queue the next click.")]
@@ -143,9 +143,12 @@ namespace NordicWilds.Combat
                 else            _weaponAnimator.PlaySwing(comboStep);
             }
 
-            // Schedule state reset
+            var animDriver = GetComponent<PlayerAnimationDriver>();
+            if (animDriver != null) animDriver.PlayAttack(isFinisher);
+
+            // Schedule state reset (Wait until hit is dealt + small follow-through)
             if (resetStateRoutine != null) StopCoroutine(resetStateRoutine);
-            resetStateRoutine = StartCoroutine(ResetStateAfterDelay(cooldown * 0.75f));
+            resetStateRoutine = StartCoroutine(ResetStateAfterDelay(hitDelay + 0.2f));
 
             // Launch delayed hitbox coroutine
             StartCoroutine(HitboxRoutine(hitDelay, rawDamage, isFinisher));

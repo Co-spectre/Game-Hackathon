@@ -199,6 +199,9 @@ namespace NordicWilds.Combat
             StartCoroutine(_flashRoutine);
 
 
+            var animDriver = GetComponent<NordicWilds.Player.PlayerAnimationDriver>();
+            if (animDriver != null) animDriver.PlayHit();
+
             if (currentHealth <= 0) Die();
         }
 
@@ -358,6 +361,9 @@ namespace NordicWilds.Combat
         {
             if (isDead) return;
 
+            var animDriver = GetComponent<NordicWilds.Player.PlayerAnimationDriver>();
+            if (animDriver != null) animDriver.SetDead(true);
+
             isDead = true;
             OnDeath?.Invoke(gameObject);
 
@@ -387,6 +393,9 @@ namespace NordicWilds.Combat
         /// </summary>
         public void ForceRespawn(Vector3 spawnPoint)
         {
+            var animDriver = GetComponent<NordicWilds.Player.PlayerAnimationDriver>();
+            if (animDriver != null) animDriver.SetDead(false);
+
             if (_iFrameRoutine != null) { StopCoroutine(_iFrameRoutine); _iFrameRoutine = null; }
             if (_renderer != null) _renderer.enabled = true;
 
@@ -402,6 +411,9 @@ namespace NordicWilds.Combat
 
         private System.Collections.IEnumerator RespawnRoutine()
         {
+            var animDriver = GetComponent<NordicWilds.Player.PlayerAnimationDriver>();
+            if (animDriver != null) animDriver.SetDead(false);
+
             isRespawning = true;
 
             if (playerController != null)

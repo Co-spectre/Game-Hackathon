@@ -25,6 +25,13 @@ namespace NordicWilds.Player
         [SerializeField] private float dashDuration     = 0.15f;  // active glide phase
         [SerializeField] private float dashSlideOutTime = 0.18f;  // smooth brake phase after glide
         [SerializeField] private float dashCooldown     = 0.4f;
+        
+        [Header("Jump Stats")]
+        [SerializeField] private float jumpForce        = 8f;
+        [SerializeField] private float groundCheckRadius = 0.3f;
+        [SerializeField] private LayerMask groundLayer  = 1; // Default layer
+        private bool isGrounded = true;
+        public bool IsGrounded => isGrounded;
         [SerializeField] private bool  hasInvincibilityFrames = true; // kept for legacy; iFrames are now always on
 
 
@@ -97,7 +104,7 @@ namespace NordicWilds.Player
         // ── Internal movement ─────────────────────────────────────────────────────
         private Rigidbody rb;
         private Vector3   currentInput;
-        private Vector3   moveDirection;
+        public  Vector3   moveDirection { get; private set; }
         private bool      controlsLocked = false;
 
         // State Machine
@@ -137,6 +144,11 @@ namespace NordicWilds.Player
             rb.interpolation = RigidbodyInterpolation.Interpolate;
             rb.constraints   = RigidbodyConstraints.FreezeRotation;
             currentStamina_  = maxStamina;
+
+            if (GetComponent<PlayerAnimationDriver>() == null)
+            {
+                gameObject.AddComponent<PlayerAnimationDriver>();
+            }
         }
 
         private void Update()
@@ -151,6 +163,7 @@ namespace NordicWilds.Player
 
             HandleInput();
             HandleSprint();
+            HandleJump();
             HandleDash();
             UpdateStamina();
             UpdateState();
@@ -158,9 +171,10 @@ namespace NordicWilds.Player
 
         private void FixedUpdate()
         {
+            CheckGrounded();
             if (controlsLocked)
             {
-                rb.linearVelocity = Vector3.zero;
+                if (!rb.isKinematic) rb.linearVelocity = Vector3.zero;
                 return;
             }
 
@@ -171,8 +185,7 @@ namespace NordicWilds.Player
 
             if (CurrentState == PlayerState.Attacking)
             {
-                rb.linearVelocity = Vector3.Lerp(rb.linearVelocity,
-                    new Vector3(0, rb.linearVelocity.y, 0), Time.fixedDeltaTime * 10f);
+                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
                 return;
             }
 
@@ -348,10 +361,26 @@ namespace NordicWilds.Player
             }
         }
 
+        // ── Jump ──────────────────────────────────────────────────────────────────
+        private void HandleJump()
+        {
+            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            if (!isGrounded) return;
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        }
+
+        private void CheckGrounded()
+        {
+            // Simple spherecast at feet
+            isGrounded = Physics.CheckSphere(transform.position + Vector3.up * 0.1f, groundCheckRadius, groundLayer);
+        }
+
         // ── Dash ──────────────────────────────────────────────────────────────────
         private void HandleDash()
         {
-            if (!Input.GetKeyDown(KeyCode.Space)) return;
+            if (!Input.GetKeyDown(KeyCode.LeftAlt)) return;
             if (Time.time < LastDashTime + dashCooldown) return;
 
             // Block if stamina is depleted or insufficient
@@ -431,7 +460,11 @@ namespace NordicWilds.Player
         {
             CurrentState = newState;
             if (newState == PlayerState.Attacking || newState == PlayerState.Staggered)
-                rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            {
+                currentInput  = Vector3.zero;
+                moveDirection = Vector3.zero;
+                if (!rb.isKinematic) rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+            }
         }
 
         public void SetControlsLocked(bool locked)
@@ -442,7 +475,7 @@ namespace NordicWilds.Player
                 StopSprint();
                 currentInput  = Vector3.zero;
                 moveDirection = Vector3.zero;
-                rb.linearVelocity = Vector3.zero;
+                if (!rb.isKinematic) rb.linearVelocity = Vector3.zero;
                 CurrentState  = PlayerState.Idle;
                 isInvincible  = false;
             }

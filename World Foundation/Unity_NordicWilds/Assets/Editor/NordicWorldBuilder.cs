@@ -66,7 +66,7 @@ namespace NordicWilds.EditorTools
                 EnsureTagExists(t);
 
             // ── Clear ─────────────────────────────────────────────────────────────
-            foreach (string n in new[]{ "Nordic World Root","Player","Isometric Camera Rig" })
+            foreach (string n in new[]{ "Nordic World Root","Isometric Camera Rig" })
                 DestroyImmediate(GameObject.Find(n));
 
             GameObject worldRoot = new GameObject("Nordic World Root");
@@ -2119,7 +2119,10 @@ namespace NordicWilds.EditorTools
 
         private static GameObject SetupPlayer(string name)
         {
-            GameObject player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+            GameObject player = GameObject.Find(name);
+            if (player != null) return player;
+
+            player = GameObject.CreatePrimitive(PrimitiveType.Capsule);
             player.name = name;
             player.tag  = "Player";
 

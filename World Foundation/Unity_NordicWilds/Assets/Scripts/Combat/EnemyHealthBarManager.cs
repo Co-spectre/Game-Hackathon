@@ -14,7 +14,7 @@ public class EnemyHealthBarManager : MonoBehaviour
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void AutoCreate()
     {
-        if (FindObjectOfType<EnemyHealthBarManager>() != null) return;
+        if (FindFirstObjectByType<EnemyHealthBarManager>() != null) return;
         new GameObject("[EnemyHealthBarManager]").AddComponent<EnemyHealthBarManager>();
     }
 
@@ -55,7 +55,7 @@ public class EnemyHealthBarManager : MonoBehaviour
         // Use the IsometricCameraFollow's camera — guaranteed to be the scene render camera.
         if (_cam == null || !_cam.isActiveAndEnabled)
         {
-            var follow = FindObjectOfType<IsometricCameraFollow>();
+            var follow = FindFirstObjectByType<IsometricCameraFollow>();
             _cam = (follow != null) ? follow.GetComponent<Camera>() : Camera.main;
         }
 
@@ -161,7 +161,7 @@ public class EnemyHealthBarManager : MonoBehaviour
         _enemies.Clear();
         var playerHealth = _playerTr ? _playerTr.GetComponent<Health>() : null;
 
-        foreach (var h in FindObjectsOfType<Health>())
+        foreach (var h in FindObjectsByType<Health>(FindObjectsSortMode.None))
         {
             if (h == playerHealth || h.IsDead) continue;
             _enemies.Add(h);

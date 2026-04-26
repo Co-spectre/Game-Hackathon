@@ -80,8 +80,9 @@ namespace NordicWilds.UI
             if (!hidePlayerOnMenu || player == null) return;
 
             // Disable renderers so the capsule doesn't appear on the boat
-            hiddenPlayerRenderers = player.GetComponentsInChildren<Renderer>(true);
-            foreach (var r in hiddenPlayerRenderers) r.enabled = false;
+            // We now want the Meshy model to appear on the boat!
+            // hiddenPlayerRenderers = player.GetComponentsInChildren<Renderer>(true);
+            // foreach (var r in hiddenPlayerRenderers) r.enabled = false;
 
             // Note: CreateOceanMenuUI already disables colliders before this runs, so we
             // can't read their *current* enabled state to know what they should restore to.
@@ -313,6 +314,7 @@ namespace NordicWilds.UI
                 player.SetParent(null, worldPositionStays: false);
                 player.position = gameStartPos;
                 player.rotation = Quaternion.identity;
+                player.localScale = Vector3.one;
 
                 // Sync the rigidbody to the new transform BEFORE re-enabling physics
                 // so gravity doesn't kick in mid-teleport and produce a visible fall.

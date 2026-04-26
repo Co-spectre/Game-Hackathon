@@ -8,14 +8,33 @@ using NordicWilds.Player;
 /// </summary>
 public class MinimalHUD : MonoBehaviour
 {
-
-
-    // ── Private ────────────────────────────────────────────────────────────────
+    // ── Private Fields ─────────────────────────────────────────────────────────
     private PlayerController player;
+    private Health playerHealth;
 
+    private float currentHealth  = 1f;
+    private float currentStamina = 1f;
+    private string weaponName = "";
+
+    // Textures
+    private Texture2D healthFillTex;
+    private Texture2D healthBgTex;
+    private Texture2D staminaFillTex;
+    private Texture2D staminaBgTex;
+    private Texture2D dashFullTex;
+    private Texture2D dashEmptyTex;
+    private Texture2D panelTex;
+    private Texture2D bgTex;
+    private Texture2D darkTex;
+
+    // Style
+    private GUIStyle labelStyle;
+
+    // ── Lifecycle ──────────────────────────────────────────────────────────────
     void Start()
     {
         BuildTextures();
+        InitStyles();
         RefreshReferences();
         SyncBarsFromPlayer();
     }
@@ -29,23 +48,49 @@ public class MinimalHUD : MonoBehaviour
 
     void OnDestroy()
     {
-
+        DestroyTex(healthFillTex);
+        DestroyTex(healthBgTex);
+        DestroyTex(staminaFillTex);
+        DestroyTex(staminaBgTex);
+        DestroyTex(dashFullTex);
+        DestroyTex(dashEmptyTex);
+        DestroyTex(panelTex);
+        DestroyTex(bgTex);
+        DestroyTex(darkTex);
     }
 
-    // ── IMGUI ─────────────────────────────────────────────────────────────────
+    // ── IMGUI ──────────────────────────────────────────────────────────────────
     void OnGUI()
     {
+        if (labelStyle == null) InitStyles();
 
+        float barW = 220f;
+        float barH = 18f;
+        float x    = 20f;
+        float y    = Screen.height - 80f;
+
+        // Health bar
+        DrawBar(new Rect(x, y, barW, barH), currentHealth, healthFillTex, new Color(0.6f, 0f, 0f));
+        GUI.Label(new Rect(x + 4f, y + 1f, barW, barH), "HP", labelStyle);
+
+        y += barH + 6f;
+
+        // Stamina bar
+        DrawBar(new Rect(x, y, barW, barH), currentStamina, staminaFillTex, new Color(0f, 0.4f, 0.7f));
+        GUI.Label(new Rect(x + 4f, y + 1f, barW, barH), "ST", labelStyle);
     }
 
     private void DrawBar(Rect rect, float value, Texture2D fillTexture, Color shadowColor)
     {
+        if (darkTex == null || bgTex == null) return;
+
         GUI.DrawTexture(new Rect(rect.x - 2f, rect.y - 2f, rect.width + 4f, rect.height + 4f), darkTex);
         GUI.DrawTexture(rect, bgTex);
 
         Rect fillRect = rect;
         fillRect.width *= Mathf.Clamp01(value);
-        GUI.DrawTexture(fillRect, fillTexture);
+        if (fillTexture != null)
+            GUI.DrawTexture(fillRect, fillTexture);
 
         Color previous = GUI.color;
         GUI.color = shadowColor;
@@ -67,6 +112,7 @@ public class MinimalHUD : MonoBehaviour
     private void SyncBarsFromPlayer()
     {
         if (playerHealth != null && playerHealth.MaxHealth > 0f)
+            currentHealth = playerHealth.CurrentHealth / playerHealth.MaxHealth;
 
         if (player != null)
             currentStamina = player.StaminaFraction;
@@ -74,7 +120,7 @@ public class MinimalHUD : MonoBehaviour
 
     private void InitStyles()
     {
-
+        labelStyle = new GUIStyle()
         {
             fontSize  = 14,
             fontStyle = FontStyle.Bold,
@@ -98,6 +144,10 @@ public class MinimalHUD : MonoBehaviour
 
         // Panel backing
         panelTex = MakeTex(2, 2, new Color(0.04f, 0.04f, 0.08f, 0.72f));
+
+        // Shared utility textures
+        bgTex   = MakeTex(2, 2, new Color(0.1f, 0.1f, 0.1f, 0.8f));
+        darkTex = MakeTex(2, 2, new Color(0f, 0f, 0f, 0.9f));
     }
 
     private Texture2D MakeTex(int w, int h, Color c)
@@ -113,5 +163,5 @@ public class MinimalHUD : MonoBehaviour
 
     private void DestroyTex(Texture2D t) { if (t != null) Destroy(t); }
 
-    public void UpdateWeapon(string name) => weaponName = name;
+    public void UpdateWeapon(string name) { weaponName = name; }
 }
