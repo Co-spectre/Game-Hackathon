@@ -3,6 +3,7 @@ using System.Collections;
 using NordicWilds.Player;
 using NordicWilds.CameraSystems;
 using NordicWilds.Combat;
+using NordicWilds.UI;
 
 namespace NordicWilds.World
 {
@@ -62,33 +63,74 @@ namespace NordicWilds.World
                 if (camScript != null) camScript.SnapToTarget();
             }
 
-            // Change Environment lighting based on destination
+            // Change Environment lighting based on destination — both palettes are
+            // sunset / low-contrast variants of the same dusk mood, just hue-shifted.
+            RenderSettings.skybox = null;
+            RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Trilight;
+            RenderSettings.ambientIntensity = 0.85f;
+            RenderSettings.reflectionIntensity = 0.30f;
+            RenderSettings.fog = true;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+
             if (isReturnPortal)
             {
-                RenderSettings.fogColor = new Color(0.6f, 0.75f, 0.9f);
-                RenderSettings.ambientSkyColor = new Color(0.4f, 0.5f, 0.7f);
-                RenderSettings.ambientEquatorColor = new Color(0.3f, 0.4f, 0.6f);
-                RenderSettings.ambientGroundColor = new Color(0.2f, 0.3f, 0.5f);
+                // Frostheim — cool dusk
+                RenderSettings.fogDensity = 0.020f;
+                RenderSettings.fogColor = new Color(0.36f, 0.28f, 0.32f);
+                RenderSettings.ambientSkyColor     = new Color(0.42f, 0.34f, 0.34f);
+                RenderSettings.ambientEquatorColor = new Color(0.32f, 0.28f, 0.32f);
+                RenderSettings.ambientGroundColor  = new Color(0.20f, 0.22f, 0.28f);
+
+                if (Camera.main != null)
+                {
+                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                    Camera.main.backgroundColor = new Color(0.30f, 0.22f, 0.26f);
+                    Camera.main.allowHDR = false;
+                }
 
                 var dirLight = Object.FindFirstObjectByType<Light>();
                 if (dirLight != null && dirLight.type == LightType.Directional)
                 {
-                    dirLight.color = new Color(0.6f, 0.75f, 1f);
-                    dirLight.intensity = 1.1f;
+                    dirLight.color = new Color(0.96f, 0.66f, 0.42f);
+                    dirLight.intensity = 0.55f;
+                    dirLight.transform.rotation = Quaternion.Euler(14f, -54f, 0f);
+                    dirLight.shadows = LightShadows.Soft;
+                    dirLight.shadowStrength = 0.45f;
                 }
             }
             else
             {
-                RenderSettings.fogColor = new Color(1f, 0.8f, 0.9f); // Pinkish fog
-                RenderSettings.ambientSkyColor = new Color(0.9f, 0.8f, 0.85f);
-                RenderSettings.ambientEquatorColor = new Color(0.8f, 0.7f, 0.75f);
-                RenderSettings.ambientGroundColor = new Color(0.6f, 0.8f, 0.6f);
+                // Yamato — warm dusk
+                RenderSettings.fogDensity = 0.013f;
+                RenderSettings.fogColor = new Color(0.46f, 0.30f, 0.32f);
+                RenderSettings.ambientSkyColor     = new Color(0.50f, 0.36f, 0.34f);
+                RenderSettings.ambientEquatorColor = new Color(0.38f, 0.30f, 0.32f);
+                RenderSettings.ambientGroundColor  = new Color(0.22f, 0.20f, 0.28f);
+
+                if (Camera.main != null)
+                {
+                    Camera.main.clearFlags = CameraClearFlags.SolidColor;
+                    Camera.main.backgroundColor = new Color(0.32f, 0.22f, 0.26f);
+                    Camera.main.allowHDR = false;
+                }
 
                 var dirLight = Object.FindFirstObjectByType<Light>();
                 if (dirLight != null && dirLight.type == LightType.Directional)
                 {
-                    dirLight.color = new Color(1f, 0.95f, 0.85f); // Warm spring sun
-                    dirLight.intensity = 1.25f;
+                    dirLight.color = new Color(0.96f, 0.58f, 0.32f);
+                    dirLight.intensity = 0.55f;
+                    dirLight.transform.rotation = Quaternion.Euler(10f, -32f, 0f);
+                    dirLight.shadows = LightShadows.Soft;
+                    dirLight.shadowStrength = 0.38f;
+                }
+
+                if (Object.FindFirstObjectByType<YamatoArrivalDialogue>() == null)
+                {
+                    new GameObject("YamatoArrivalDialogue").AddComponent<YamatoArrivalDialogue>();
+                }
+                if (Object.FindFirstObjectByType<WorldMapOverlay>() == null)
+                {
+                    new GameObject("WorldMapOverlay").AddComponent<WorldMapOverlay>();
                 }
             }
 
